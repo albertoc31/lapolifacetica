@@ -1,0 +1,40 @@
+{# Pagina Index #}
+{% extends 'base.html.twig' %}
+
+{# TITULO #}
+{% block title %}Convergencia de las Culturas - Categoria{% endblock %}
+
+{# BODY #}
+{% block body %}
+<!-- Page Content -->
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <h1 class="mt-4 mb-3">Categoria de Actividades</h1>
+
+    <!-- Portfolio Item Row -->
+    <div class="row">
+
+        <div class="col-md-8">
+            <h3 class="my-3">{{ category.name }}</h3>
+            <p>{{ category.description }}</p>
+        </div>
+
+    </div>
+    <!-- /.row -->
+
+</div>
+<!-- /.container -->
+
+{% endblock %}
+
+{# CSS #}
+{% block stylesheets %}
+    {#<style>
+        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+    </style>#}
+{% endblock %}
+
+
+
+

@@ -1,0 +1,35 @@
+{# Pagina Index #}
+{% extends 'base.html.twig' %}
+
+{# TITULO #}
+{% block title %}Convergencia de las Culturas Contacto{% endblock %}
+
+{# BODY #}
+{% block body %}
+    <div class="container">
+        <h2>Contacta </h2>
+        con nosotros
+    </div>
+
+    {% if equipo == 'lavapies' or equipo == 'none' %}
+        Contacta con nosotros en Lavapies <br />
+    {% endif %}
+    {% if equipo == 'latina' or equipo == 'none' %}
+        Contacta con nosotros en Latina <br />
+    {% endif %}
+    {% if equipo == 'usera' or equipo == 'none' %}
+        Contacta con nosotros en Usera <br />
+    {% endif %}
+
+{% endblock %}
+
+{# CSS #}
+{% block stylesheets %}
+    {#<style>
+        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+    </style>#}
+{% endblock %}
+
+
+
+

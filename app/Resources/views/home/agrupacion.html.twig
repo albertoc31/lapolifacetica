@@ -1,0 +1,43 @@
+{# Pagina Index #}
+{% extends 'base.html.twig' %}
+
+{# TITULO #}
+{% block title %}Convergencia de las Culturas - Agrupacion{% endblock %}
+
+{# BODY #}
+{% block body %}
+<!-- Page Content -->
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <h1 class="mt-4 mb-3">Agrupacion</h1>
+
+    <!-- Portfolio Item Row -->
+    <div class="row">
+
+        <div class="col-md-8">
+            <h3 class="my-3">{{ agrupacion.name }}</h3>
+            <p><strong>Barrio:</strong> {{ agrupacion.barrio }}</p>
+            <p><strong>Ciudad:</strong> {{ agrupacion.ciudad }}</p>
+            <p><strong>País:</strong> {{ agrupacion.pais }}</p>
+            <p><strong>Miembros:</strong> {{ agrupacion.miembros }}</p>
+        </div>
+
+    </div>
+    <!-- /.row -->
+
+</div>
+<!-- /.container -->
+
+{% endblock %}
+
+{# CSS #}
+{% block stylesheets %}
+    {#<style>
+        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+    </style>#}
+{% endblock %}
+
+
+
+

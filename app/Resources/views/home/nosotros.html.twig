@@ -1,0 +1,78 @@
+{# Pagina Index #}
+{% extends 'base.html.twig' %}
+
+{# TITULO #}
+{% block title %}Convergencia de las Culturas - Nosotros{% endblock %}
+
+{# BODY #}
+{% block body %}
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <h1 class="mt-4 mb-3">Sobre Convergencia
+            <small> y nuestras acciones</small>
+        </h1>
+        <!-- END Page Heading/Breadcrumbs -->
+
+        <!-- Image Header -->
+        <img class="img-fluid rounded mb-4" src="{{ asset('img/nosotros.convergencia.jpeg') }}" alt="">
+        <!-- END Image Header -->
+
+        <p>Son muchas las actividades que realiza Convergencia de las Culturas a lo largo y ancho del planeta. Nuestros
+            equipos se caracterizan por su activismo y su trabajo voluntario en diversas áreas. ¿Te gustaría participar con nosotros?
+        Contáctanos a través de nuestro <a href="{{ path('contacto') }}">formulario de contacto</a></p>
+
+        <!-- Acciones -->
+        <h2>Algunas de nuestra acciones</h2>
+        <div class="row">
+            <div class="col-lg-4 col-sm-6 portfolio-item">
+                <div class="card h-100">
+                    <a href="#"><img class="card-img-top" src="{{ asset('images/apoyo_escolar.jpg') }}" alt=""></a>
+                    <div class="card-body">
+                        <h4 class="card-title">Apoyo Escolar en el barrio de Lavapiés
+                        </h4>
+                        <p class="card-text">Partiendo de una actividad de apoyo escolar, buscamos generar una red de contactos con adolescentes
+                            y familias para poder trabajar en un Proyecto Educativo que intenta fomentar entre los más jóvenes
+                            valores de tolerancia, igualdad, respeto y solidaridad.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 portfolio-item">
+                <div class="card h-100">
+                    <a href="#"><img class="card-img-top" src="{{ asset('images/cena_ramadan.jpg') }}" alt=""></a>
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Cena de Ramadán con los vecinos
+                        </h4>
+                        <p class="card-text">Aprovechando el mes del Ramadán, hicimos en el Barrio del Pilar de Madrid una cena compartida
+                            a la que invitamos a los vecinos y los amigos en un precioso ejemplo de convivencia multicultural,
+                            a la vez que reivinidcábamos el papel histórico del Islam en nuestra historia.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-sm-6 portfolio-item">
+                <div class="card h-100">
+                    <a href="#"><img class="card-img-top" src="{{ asset('images/mesa_interculturalidad.jpg') }}" alt=""></a>
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Mesa de Interculturalidad del Foro Humanista Europeo
+                        </h4>
+                        <p class="card-text">Durante el Foro Humanista Europeo celebrado en Madrid el 2018 organizamos la Mesa de
+                            Interculturalidad, compartiendo un espacio de reflexión y diálogo con numerosas amigas y amigos representativos
+                            de las diversas culturas que convivimos en este proyecto común.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END Acciones -->
+
+
+    </div>
+{% endblock %}
+
+{# CSS #}
+{% block stylesheets %}
+    {#<style>
+        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+    </style>#}
+{% endblock %}

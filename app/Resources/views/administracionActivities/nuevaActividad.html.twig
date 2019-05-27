@@ -1,0 +1,65 @@
+{# Pagina Nueva Actividad #}
+{% extends 'base.html.twig' %}
+
+{# Usamos un theme para los formularios #}
+{% form_theme form 'form/activity_form.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion Actividades{% endblock %}
+
+{# BODY #}
+{% block body %}
+    <div class="container">
+        <h1 class="mt-4 mb-3">Nueva Actividad </h1>
+
+        <div class="row">
+            <div class="col-md-8">
+    {{ form_start(form) }}
+
+             {#   esto dibuja los campos #}
+    {{ form_widget(form) }}
+{#
+ Esto es el ejemplo de renderizar manualmente cada campo del formulario
+                {{ form_errors(form) }}
+
+                <div class="control-group form-group">
+                    {{ form_label(form.activity_name) }}
+                    {{ form_errors(form.activity_name) }}
+                    {{ form_widget(form.activity_name) }}
+                </div>
+
+                <div class="control-group form-group">
+                    {{ form_widget(form.submit) }}
+                </div>
+#}
+
+
+    {{ form_end(form) }}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{# CSS #}
+{% block stylesheets %}
+    {#<style>
+        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+    </style>#}
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        jQuery(document).ready(function() {
+            $('.js-datepicker').datepicker();
+        });
+    </script>
+{% endblock %}
+
+
+
