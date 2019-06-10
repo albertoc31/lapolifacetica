@@ -8,7 +8,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Activity;
 use AppBundle\Entity\Category;
-use AppBundle\Entity\Agrupacion;
+use AppBundle\Entity\Asociacion;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 // Clase de formulario de nueva actividad
 use AppBundle\Form\ActivityType;
 use AppBundle\Form\CategoryType;
-use AppBundle\Form\AgrupacionType;
+use AppBundle\Form\AsociacionType;
 
 /**
  * @Route("/administracionActivities")
@@ -85,7 +85,7 @@ class ActivityController extends Controller {
     /**
      * @Route("/nuevaCategoria", name="nuevaCategoria")
      */
-    public function nuevaCategoriadAction(Request $request)
+    public function nuevaCategoriaAction(Request $request)
     {
         // creates an activity and gives it some dummy data for this example
         $category = new Category();
@@ -121,40 +121,40 @@ class ActivityController extends Controller {
     }
 
     /**
-     * @Route("/nuevaAgrupacion", name="nuevaAgrupacion")
+     * @Route("/nuevaAsociacion", name="nuevaAsociacion")
      */
-    public function nuevaAgrupaciondAction(Request $request)
+    public function nuevaAsociacionAction(Request $request)
     {
         // creates an activity and gives it some dummy data for this example
-        $agrupacion = new Agrupacion();
-        $form = $this->createForm(AgrupacionType::class, $agrupacion);
+        $asociacion = new Asociacion();
+        $form = $this->createForm(AsociacionType::class, $asociacion);
 
         // Recogemos la información
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // $form->getData() holds the submitted values
-            // but, the original `$agrupacion` variable has also been updated
-            $agrupacion = $form->getData();
+            // but, the original `$asociacion` variable has also been updated
+            $asociacion = $form->getData();
 
             /*
              * Para usar una función directa de PHP hay que escapar !!!!!
-             * $agrupacion->setFechaIni(new \DateTime());
+             * $asociacion->setFechaIni(new \DateTime());
             */
-            $agrupacion->setMiembros(4);
-            $agrupacion->setMiembrosIds([1,2]);
+            $asociacion->setMiembros(0);
+            $asociacion->setMiembrosIds([]);
 
             // almacenar la actividad
 
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($agrupacion);
+            $entityManager->persist($asociacion);
             $entityManager->flush();
 
-            return $this->redirectToRoute('agrupacion', ['id' => $agrupacion->getId()]);
+            return $this->redirectToRoute('asociacion', ['id' => $asociacion->getId()]);
         }
 
         // replace this example code with whatever you need
-        return $this->render('administracionActivities/nuevaAgrupacion.html.twig', [
+        return $this->render('administracionActivities/nuevaAsociacion.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'form' => $form->createView(),
         ]);

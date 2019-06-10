@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Activity;
-use AppBundle\Entity\Agrupacion;
+use AppBundle\Entity\Asociacion;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\User;
 
@@ -95,18 +95,18 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/agrupacion/{id}", name="agrupacion")
+     * @Route("/asociacion/{id}", name="asociacion")
      */
-    public function agrupacionAction(Request $request, $id = null)
+    public function asociacionAction(Request $request, $id = null)
     {
         if ($id != null) {
 
-            $repository = $this->getDoctrine()->getRepository(Agrupacion::class);
-            $agrupacion = $repository->findOneById($id);
+            $repository = $this->getDoctrine()->getRepository(Asociacion::class);
+            $asociacion = $repository->findOneById($id);
 
-            return $this->render('home/agrupacion.html.twig', [
+            return $this->render('home/asociacion.html.twig', [
                 'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
-                'agrupacion' => $agrupacion,
+                'asociacion' => $asociacion,
             ]);
         } else {
             // redirects to the "homepage" route
@@ -126,13 +126,14 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/materiales/", name="materiales")
+     * @Route("/documentos/", name="documentos")
      */
-    public function materialesAction(Request $request)
+    public function documentosAction(Request $request)
     {
         // replace this example code with whatever you need
         return $this->render('home/home.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'paginaActual' => 1,
         ]);
     }
 

@@ -35,7 +35,7 @@ class ActivityType extends AbstractType
             ->add('description', CKEditorType::class, ['label' => 'Descripción'])
             ->add('short_description', TextType::class, ['label' => 'Descripción Breve', 'attr' => ['class' => 'form-control']])
             ->add('foto', FileType::class, ['label' => 'Imagen', 'attr' => ['class' => 'form-control', 'onchange' => 'onChange(event)']])
-            ->add('agrupaciones', EntityType::class, ['class' => 'AppBundle:Agrupacion', 'multiple' => true, 'attr' => ['class' => 'form-control']])
+            ->add('asociaciones', EntityType::class, ['class' => 'AppBundle:Asociacion', 'multiple' => true, 'attr' => ['class' => 'form-control']])
             ->add('fechaIni', DateTimeType::class, ['widget' => 'single_text', 'html5' => false, 'attr' => ['class' => 'js-datepickerr form-control']])
             ->add('fechaFin', DateTimeType::class)
             ->add('destacado', CheckboxType::class, ['required' => false])

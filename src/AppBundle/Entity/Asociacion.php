@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Agrupacion
+ * Asociacion
  *
- * @ORM\Table(name="agrupacion")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\AgrupacionRepository")
+ * @ORM\Table(name="asociacion")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\AsociacionRepository")
  */
-class Agrupacion
+class Asociacion
 {
     /**
      * @var int
@@ -29,27 +29,6 @@ class Agrupacion
     private $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="barrio", type="string", length=255)
-     */
-    private $barrio;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="ciudad", type="string", length=255)
-     */
-    private $ciudad;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="pais", type="string", length=255)
-     */
-    private $pais;
-
-    /**
      * @var int
      *
      * @ORM\Column(name="miembros", type="smallint")
@@ -59,7 +38,7 @@ class Agrupacion
     /**
      * @var array
      *
-     * @ORM\Column(name="miembros_ids", type="simple_array")
+     * @ORM\Column(name="miembros_ids", type="simple_array", nullable=true)
      */
     private $miembrosIds;
 
@@ -79,7 +58,7 @@ class Agrupacion
      *
      * @param string $name
      *
-     * @return Agrupacion
+     * @return Asociacion
      */
     public function setName($name)
     {
@@ -99,83 +78,11 @@ class Agrupacion
     }
 
     /**
-     * Set barrio
-     *
-     * @param string $barrio
-     *
-     * @return Agrupacion
-     */
-    public function setBarrio($barrio)
-    {
-        $this->barrio = $barrio;
-
-        return $this;
-    }
-
-    /**
-     * Get barrio
-     *
-     * @return string
-     */
-    public function getBarrio()
-    {
-        return $this->barrio;
-    }
-
-    /**
-     * Set ciudad
-     *
-     * @param string $ciudad
-     *
-     * @return Agrupacion
-     */
-    public function setCiudad($ciudad)
-    {
-        $this->ciudad = $ciudad;
-
-        return $this;
-    }
-
-    /**
-     * Get ciudad
-     *
-     * @return string
-     */
-    public function getCiudad()
-    {
-        return $this->ciudad;
-    }
-
-    /**
-     * Set pais
-     *
-     * @param string $pais
-     *
-     * @return Agrupacion
-     */
-    public function setPais($pais)
-    {
-        $this->pais = $pais;
-
-        return $this;
-    }
-
-    /**
-     * Get pais
-     *
-     * @return string
-     */
-    public function getPais()
-    {
-        return $this->pais;
-    }
-
-    /**
      * Set miembros
      *
      * @param integer $miembros
      *
-     * @return Agrupacion
+     * @return Asociacion
      */
     public function setMiembros($miembros)
     {
@@ -199,7 +106,7 @@ class Agrupacion
      *
      * @param array $miembrosIds
      *
-     * @return Agrupacion
+     * @return Asociacion
      */
     public function setMiembrosIds($miembrosIds)
     {
@@ -221,7 +128,7 @@ class Agrupacion
     /**
      * Convierte objeto en String
      *
-     * Lo usamos para sacar los nombres de las agrupaciones
+     * Lo usamos para sacar los nombres de las asociaciones
      */
     public function __toString()
     {

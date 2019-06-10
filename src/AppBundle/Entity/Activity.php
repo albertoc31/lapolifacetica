@@ -30,13 +30,13 @@ class Activity
 
     /**
      * Many Activities belongs to Many Groups.
-     * @ORM\ManyToMany(targetEntity="Agrupacion")
-     * @ORM\JoinTable(name="agrupaciones_activities",
+     * @ORM\ManyToMany(targetEntity="Asociacion")
+     * @ORM\JoinTable(name="asociaciones_activities",
      *      joinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="agrupaciones", referencedColumnName="id")}
+     *      inverseJoinColumns={@ORM\JoinColumn(name="asociaciones", referencedColumnName="id")}
      *      )
      */
-    private $agrupaciones;
+    private $asociaciones;
 
     /**
      * @var string
@@ -89,7 +89,7 @@ class Activity
 
 
     public function __construct() {
-        $this->agrupaciones = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->asociaciones = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -296,36 +296,36 @@ class Activity
 
 
     /**
-     * Add agrupacione
+     * Add asociacione
      *
-     * @param \AppBundle\Entity\Agrupacion $agrupaciones
+     * @param \AppBundle\Entity\Asociacion $asociaciones
      *
      * @return Activity
      */
-    public function addAgrupacione(\AppBundle\Entity\Agrupacion $agrupaciones)
+    public function addAsociacione(\AppBundle\Entity\Asociacion $asociaciones)
     {
-        $this->agrupaciones[] = $agrupaciones;
+        $this->asociaciones[] = $asociaciones;
 
         return $this;
     }
 
     /**
-     * Remove agrupacione
+     * Remove asociacione
      *
-     * @param \AppBundle\Entity\Agrupacion $agrupaciones
+     * @param \AppBundle\Entity\Asociacion $asociaciones
      */
-    public function removeAgrupacione(\AppBundle\Entity\Agrupacion $agrupaciones)
+    public function removeAsociacione(\AppBundle\Entity\Asociacion $asociaciones)
     {
-        $this->agrupaciones->removeElement($agrupaciones);
+        $this->asociaciones->removeElement($asociaciones);
     }
 
     /**
-     * Get agrupaciones
+     * Get asociaciones
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getAgrupaciones()
+    public function getAsociaciones()
     {
-        return $this->agrupaciones;
+        return $this->asociaciones;
     }
 }

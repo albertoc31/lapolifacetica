@@ -68,7 +68,7 @@
         <h2>Actividades</h2>
 
         <div class="row">
-
+            {% if activity is defined and activity is not empty %}
             {% for activity in activities %}
                 <div class="col-lg-4 col-sm-6 portfolio-item">
                     <div class="card h-100">
@@ -82,6 +82,7 @@
                     </div>
                 </div>
             {% endfor %}
+            {% endif %}
 
         </div>
         <!-- /.row -->
