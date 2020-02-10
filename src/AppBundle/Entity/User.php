@@ -54,6 +54,14 @@ class User implements UserInterface, \Serializable
      */
     private $isActive;
 
+
+    /**
+     * @ORM\Column(name="asociacion_id", type="integer")
+     * @ORM\ManyToOne(targetEntity="Asociacion", inversedBy="users")
+     * @ORM\JoinColumn(name="asociacion_id", referencedColumnName="id")
+     */
+    private $asociacion;
+
     public function __construct()
     {
         $this->isActive = true;
@@ -131,6 +139,20 @@ class User implements UserInterface, \Serializable
 
     public function eraseCredentials()
     {
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getAsociacion()
+    {
+        return $this->asociacion;
+    }
+    public function setAsociacion($asociacion)
+    {
+        return $this->asociacion = $asociacion;
     }
 
     /** @see \Serializable::serialize() */

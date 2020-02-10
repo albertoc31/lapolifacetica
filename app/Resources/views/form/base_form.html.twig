@@ -1,9 +1,15 @@
+
 {%- block form_row -%}
-    <div class="control-group form-group">
+    <div class="control-group form-group osea">{#{{ testOption }}#}
+        {#{{ dump(form.vars.oldFoto) }}#}
         <div class="controls">
             {{- form_label(form) -}}
             {{- form_errors(form) -}}
             {{- form_widget(form) -}}
+            {#{%  dump form.vars.attr %}#}
+            {% if form.vars.attr.oldFoto is defined and form.vars.attr.oldFoto != false %}
+                <img class="img-fluid" src="{{ asset(activityImg ~ form.vars.attr.oldFoto)  | imagine_filter('my_thumb') }}" alt="">
+            {% endif %}
         </div>
     </div>
 {%- endblock form_row -%}

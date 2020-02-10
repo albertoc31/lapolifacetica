@@ -1,0 +1,40 @@
+{# Pagina Nueva Asociacion / Edit Asociacion #}
+{% extends 'base.html.twig' %}
+
+{# Usamos un theme para los formularios #}
+{% form_theme form 'form/base_form.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion Asociaciones{% endblock %}
+
+{# BODY #}
+{% block body %}
+    <div class="container">
+
+        <h1 class="mt-4 mb-3">{% if isEdit is defined and isEdit != false %}
+                Edita Asociación
+            {% else %}
+                Nueva Asociación
+            {% endif %}</h1>
+
+        <div class="row">
+            <div class="col-md-8">
+    {{ form_start(form) }}
+
+             {#   esto dibuja los campos #}
+    {{ form_widget(form) }}
+
+   {# {% if oldFoto is defined and oldFoto != false %}
+        <img class="img-fluid" src="{{ asset(activityImg ~ oldFoto)  | imagine_filter('my_thumb') }}" alt="">
+    {% endif %} #}
+
+    {{ form_end(form) }}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+

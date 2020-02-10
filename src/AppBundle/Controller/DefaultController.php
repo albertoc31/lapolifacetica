@@ -7,8 +7,9 @@ use AppBundle\Entity\Asociacion;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\User;
 
-// Clase de formulario de nueva actividad
+// Clase de formulario de nuevo usuario
 use AppBundle\Form\UserType;
+use AppBundle\Form\ContactType;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,12 +21,14 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class DefaultController extends Controller
 {
+    private static $max_activities = 3;
+
     /**
      * @Route("/{pagina}", name="homepage")
      */
     public function indexAction(Request $request, $pagina = 1)
     {
-        $numActivities = 3;
+        $numActivities = $this::$max_activities;
         // Capturamos repositorio de tabla Activity
         $repository = $this->getDoctrine()->getRepository(Activity::class);
 
@@ -35,18 +38,27 @@ class DefaultController extends Controller
         // sacamos las actividades según la paginacion
         $activities = $repository->paginaActividades($pagina, $numActivities);
 
+        // Capturamos repositorio de tabla Asociaciones
+        /*$repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+        $asociaciones = $repository_asc->findAll();
+
+        NOS LO HEMOS LLEVADO A UNA EXTENSION DE TWIG
+        */
+
+        //var_dump($asociaciones);die();
         // replace this example code with whatever you need
         return $this->render('home/home.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'activities' => $activities,
+            /*'asociaciones' => $asociaciones,*/
             'paginaActual' => $pagina,
         ]);
     }
 
     /**
- * @Route("/activity/{id}", name="activity")
- */
-    public function activityAction(Request $request, $id = null)
+     * @Route("/actividad/{id}", name="actividad")
+     */
+    public function actividadAction(Request $request, $id = null)
     {
         if ($id != null) {
 
@@ -72,6 +84,22 @@ class DefaultController extends Controller
             // redirects to the "homepage" route
             return $this->redirectToRoute('homepage');
         }
+    }
+
+    /**
+     * @Route("/actividades/", name="actividades")
+     */
+    public function actividadesAction(Request $request, $pagina = 1)
+    {
+        // Capturamos repositorio de tabla Activity
+        $repository = $this->getDoctrine()->getRepository(Activity::class);
+        // sacamos las actividades según la paginacion
+        $activities = $repository->paginaActividades($pagina, $this::$max_activities);
+
+        return $this->render('home/activities.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'activities' => $activities,
+        ]);
     }
 
     /**
@@ -138,15 +166,48 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/contacto/{equipo}", name="contacto")
+     * @Route("/contacto/", name="contacto")
      */
-    public function contactoAction(Request $request, $equipo = 'none')
+    public function contactoAction(Request $request)
     {
-        // replace this example code with whatever you need
-        return $this->render('home/contacto.html.twig', [
-            'equipo' => $equipo,
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]);
+        // saco el array de asociaciones
+
+        // Capturamos repositorio de tabla Asociaciones
+        $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+        $asociaciones = $repository_asc->findAll();
+
+        $asociaciones_nombres = array_map( function(Asociacion $asociacion){return $asociacion->getName();} , $asociaciones );
+
+        /*var_dump($asociaciones_nombres);die();*/
+
+        // Create the form according to the FormType created previously.
+        // And give the proper parameters
+        $form = $this->createForm(ContactType::class,null, array(
+            // To set the action use $this->generateUrl('route_identifier')
+            'action' => $this->generateUrl('contacto'),
+            'method' => 'POST',
+            'choices' => array( 'Asociaciones' => array_combine($asociaciones_nombres, $asociaciones_nombres), 'General' => array('La Polifacética'=> 'La Polifacética'))
+        ));
+        $message = '';
+
+        if ($request->isMethod('POST')) {
+            // Refill the fields in case the form is not valid.
+            $form->handleRequest($request);
+
+            if($form->isValid()){
+                // Send mail
+                if($this->sendEmail($form->getData())){
+                    $message = 'Mensaje enviado correctamente';
+                }else{
+                    $message = 'Ha habido un problema al enviar el mail. Por favor, vuelva a intentarlo';
+                }
+            }
+        }
+
+        return $this->render('home/contacto.html.twig', array(
+            'form' => $form->createView(),
+            'message'  => $message
+        ));
     }
 
     /**
@@ -173,9 +234,23 @@ class DefaultController extends Controller
      */
     public function registroAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
-        // creates an activity and gives it some dummy data for this example
+        // Capturamos repositorio de tabla Asociaciones
+        $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+        $asociaciones = $repository_asc->findAll();
+        $asociaciones_array = array_map( function(Asociacion $asociacion){return [$asociacion->getId(),$asociacion->getName()];} , $asociaciones );
+        $choices = [];
+        foreach ($asociaciones_array as $asoc){
+            //print_r($asoc);
+            $choices[$asoc[1]] = $asoc[0];
+        }
+
+        /*var_dump($choices); die();
+        $choices = array_combine($asociaciones_nombres, $asociaciones_nombres);*/
+
+        // creates an user
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user, ['choices' => $choices]);
+
 
         // 2) handle the submit (will only happen on POST)
         $form->handleRequest($request);
@@ -206,5 +281,31 @@ class DefaultController extends Controller
             'home/register.html.twig',
             ['form' => $form->createView()]
         );
+    }
+
+    private function sendEmail($data){
+        $myappContactMail = 'info@convergenciadeculturas.org';
+        $myappContactPassword = 'Toledo50';
+        /*$asociaciones_nombres = $data["asociaciones"]->map( function(Asociacion $asociacion){return $asociacion->getName();} )->getValues();
+        var_dump(implode (', ',  $asociaciones_nombres) );die();*/
+        $asociaciones_nombres = implode(', ',  $data["asociaciones"] );
+
+        // In this case we'll use GMAIL mail services.
+        // If your service is another, then read the following article to know which smpt code to use and which port
+        // http://ourcodeworld.com/articles/read/14/swiftmailer-send-mails-from-php-easily-and-effortlessly
+        $transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465,'ssl')
+            ->setUsername($myappContactMail)
+            ->setPassword($myappContactPassword);
+
+        $mailer = \Swift_Mailer::newInstance($transport);
+
+        $message = \Swift_Message::newInstance("Formulario de contacto de La Polifacética: ". $data["subject"])
+            ->setFrom(array($myappContactMail => "Mensaje de ".$data["name"]))
+            ->setTo(array(
+                $myappContactMail => $myappContactMail
+            ))
+            ->setBody($data["message"]."<br />Email contacto:".$data["email"]."<br />Asociaciones destinatarias: ".$asociaciones_nombres, 'text/html');
+
+        return $mailer->send($message);
     }
 }

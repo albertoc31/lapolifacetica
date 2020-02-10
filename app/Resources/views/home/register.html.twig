@@ -2,17 +2,17 @@
 {% extends 'base.html.twig' %}
 
 {# Usamos un theme para los formularios #}
-{% form_theme form 'form/activity_form.html.twig' %}
+{% form_theme form 'form/base_form.html.twig' %}
 
 {# TITULO #}
-{% block title %}Convergencia de las Culturas Registro{% endblock %}
+{% block title %}La Polifacética Registro{% endblock %}
 
 {# BODY #}
 {% block body %}
     <div class="container">
         <!-- Page Heading/Breadcrumbs -->
         <h1 class="mt-4 mb-3">Registro <small>de usuarios</small></h1>
-
+        {%  dump form.vars %}
         <!-- Portfolio Item Row -->
         <div class="row">
             <div class="col-lg-6">
@@ -22,9 +22,9 @@
             </div>
             <div class="col-lg-6">
                 <h2>Instrucciones de registro</h2>
-                Texto de instrucciones de registro</p>
-                Texto de instrucciones de registro</p>
-                Texto de instrucciones de registro</p>
+                Para registrate en la web has de proporcionar un email válido y una contraseña de al menos 8 caracteres.</p>
+                Además has de especificar la asociación a la que perteneces.</p>
+                Una vez aprobado el registro, te enviaremos un correo.</p>
             </div>
         </div>
         <!-- /.row -->

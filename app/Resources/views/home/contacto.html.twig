@@ -1,35 +1,28 @@
-{# Pagina Index #}
+{# Pagina Nueva Categoria #}
 {% extends 'base.html.twig' %}
 
+{# Usamos un theme para los formularios #}
+{% form_theme form 'form/base_form.html.twig' %}
+
 {# TITULO #}
-{% block title %}Convergencia de las Culturas Contacto{% endblock %}
+{% block title %}Formulario de contacto{% endblock %}
 
 {# BODY #}
 {% block body %}
     <div class="container">
-        <h2>Contacta </h2>
-        con nosotros
+        <h1 class="mt-4 mb-3">Contacta con nosotr@s</h1>
+
+        <div class="row">
+            <div class="col-md-8">
+                {% if message %}
+                    <div class="form-error">{{ message }}</div>
+                {% endif %}
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+
     </div>
 
-    {% if equipo == 'lavapies' or equipo == 'none' %}
-        Contacta con nosotros en Lavapies <br />
-    {% endif %}
-    {% if equipo == 'latina' or equipo == 'none' %}
-        Contacta con nosotros en Latina <br />
-    {% endif %}
-    {% if equipo == 'usera' or equipo == 'none' %}
-        Contacta con nosotros en Usera <br />
-    {% endif %}
-
 {% endblock %}
-
-{# CSS #}
-{% block stylesheets %}
-    {#<style>
-        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
-    </style>#}
-{% endblock %}
-
-
-
-

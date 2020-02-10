@@ -2,10 +2,10 @@
 {% extends 'base.html.twig' %}
 
 {# Usamos un theme para los formularios #}
-{#{% form_theme form 'form/activity_form.html.twig' %}#}
+{#{% form_theme form 'form/base_form.html.twig' %}#}
 
 {# TITULO #}
-{% block title %}Convergencia de las Culturas Registro{% endblock %}
+{% block title %}La Polifacética Registro{% endblock %}
 
 {# BODY #}
 {% block body %}
@@ -24,7 +24,7 @@
                 <form action="{{ path('acceso') }}" method="post">
                     <div class="control-group form-group">
                         <div class="controls">
-                            <label for="username">Username:</label>
+                            <label for="username">Usuario (email):</label>
                             <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}"/>
                         </div>
                     </div>
@@ -45,10 +45,9 @@
                 </form>
             </div>
             <div class="col-lg-6">
-                <h2>Instrucciones de registro</h2>
-                Texto de instrucciones de registro</p>
-                Texto de instrucciones de registro</p>
-                Texto de instrucciones de registro</p>
+                <h2>Instrucciones</h2>
+                Introduce tu email y tu password para poder acceder a tu área privada. Te recordamos que el acceso es sólo para socios de La Polifacética</p>
+                En caso de no estar registrado, puedes hacer en la sección <a class="" href="{{ path('registro') }}">Registro</a>. Los administradores de cada asociación serán los responsables de aprobar o denegar a los nuevos usuarios.</p>
             </div>
         </div>
         <!-- /.row -->

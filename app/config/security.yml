@@ -37,7 +37,8 @@ security:
 
     access_control:
         # require ROLE_ADMIN for /admin*
-        - { path: ^/administracionActivities, roles: ROLE_ADMIN }
+        - { path: ^/administracion, roles: ROLE_ADMIN }
+        - { path: ^/administracion, roles: ROLE_ADMIN_ASOC }
 
     encoders:
         AppBundle\Entity\User: bcrypt

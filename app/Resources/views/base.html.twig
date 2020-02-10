@@ -14,7 +14,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
 </head>
 <body>
-
+{#{%  dump %}#}
 <!-- Navigation -->
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
@@ -36,10 +36,11 @@
                         Asociaciones
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
-                        <a class="dropdown-item" href="#">Asociacion 1</a>
-                        <a class="dropdown-item" href="#">Asociacion 2</a>
-                        <a class="dropdown-item" href="#">Asociacion 3</a>
-                        <a class="dropdown-item" href="#">Asociacion 4</a>
+                        {% if asociaciones is defined and asociaciones is not empty %}
+                            {% for asociacion in asociaciones %}
+                                <a class="dropdown-item"href="{{ path('asociacion', {'id':asociacion.id}) }}">{{ asociacion.name }}</a>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </li>
                 <li class="nav-item">
@@ -48,7 +49,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Radio</a>
                 </li>
-                <li class="nav-item dropdown">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('contacto') }}">Contacto</a>
+                </li>
+                {#<li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         Contacta
@@ -56,9 +60,8 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownBlog">
                         <a class="dropdown-item" href="{{ path('contacto', {'equipo' : 'lavapies'}) }}">Contacta en Lavapies </a>
                         <a class="dropdown-item" href="{{ path('contacto', {'equipo' : 'latina'}) }}">Contacta en Latina </a>
-                        <a class="dropdown-item" href="{{ path('contacto', {'equipo' : 'usera'}) }}">Contacta en Usera </a>
                     </div>
-                </li>
+                </li>#}
                 {% if app.user %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('documentos') }}">Documentos</a>
@@ -82,7 +85,7 @@
 <!-- Footer -->
 <footer class="py-5 bg-dark">
     <div class="container">
-        <p class="m-0 text-center text-white">© 2019 Convergencia de las Culturas</p>
+        <p class="m-0 text-center text-white">© 2019 La Polifacética</p>
     </div>
 </footer>
 <!-- END Footer -->

@@ -14,6 +14,7 @@ class ActivityRepository extends \Doctrine\ORM\EntityRepository
      * Función que devuelve las actividades para una página con un número de elementos
      */
     public function paginaActividades($pagina = 1, $numActivities = 3){
+        /*var_dump($pagina, $numActivities);die();*/
         $query = $this->createQueryBuilder('a')
             ->where('a.destacado = 1')
             ->setFirstResult($numActivities*($pagina - 1))
