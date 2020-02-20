@@ -36,6 +36,7 @@ class ActivityType extends AbstractType
         $builder
             ->setAttribute('submitLabel', $options['submitLabel'])
             ->setAttribute('requireFoto', $options['requireFoto'])
+            ->setAttribute('oldFoto', $options['oldFoto'])
         ;
 
         $builder
@@ -43,7 +44,7 @@ class ActivityType extends AbstractType
             ->add('category', EntityType::class, ['class' => 'AppBundle:Category', 'attr' => ['class' => 'form-control']])
             ->add('description', CKEditorType::class, ['label' => 'Descripción'])
             ->add('short_description', TextType::class, ['label' => 'Descripción Breve', 'attr' => ['class' => 'form-control']])
-            ->add('foto', FileType::class, ['label' => 'Imagen', 'attr' => ['class' => 'form-control', 'onchange' => 'onChange(event)'], "data_class" => null, 'required' => $options['requireFoto']])
+            ->add('foto', FileType::class, ['label' => 'Imagen', 'attr' => ['class' => 'form-control', 'onchange' => 'onChange(event)', 'oldFoto' => $options['oldFoto']], "data_class" => null, 'required' => $options['requireFoto']])
             ->add('asociaciones', EntityType::class, ['class' => 'AppBundle:Asociacion', 'multiple' => true, 'attr' => ['class' => 'form-control']])
             ->add('fechaIni', DateTimeType::class, ['widget' => 'single_text', 'html5' => false, 'attr' => ['class' => 'js-datepickerr form-control']])
             ->add('fechaFin', DateTimeType::class)
@@ -60,14 +61,16 @@ class ActivityType extends AbstractType
         // For Symfony 2.1 and higher:
         $view->vars['submitLabel'] = $options['submitLabel'];
         $view->vars['requireFoto'] = $options['requireFoto'];
+        $view->vars['oldFoto'] = $options['oldFoto'];
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             // 'required'=>['foto'=>true],   mejor no sobreescribir variables por defecto, por siaca
-            'submitLabel'=>'Crear Asociación',
-            'requireFoto'=>true
+            'submitLabel'=>'Crear Actividad',
+            'requireFoto'=>true,
+            'oldFoto'=>'hola',
         ));
     }
 

@@ -10,7 +10,7 @@
 <div class="container">
 
     <!-- Page Heading/Breadcrumbs -->
-    <h1 class="mt-4 mb-3">Nuestras Acciones</h1>
+    <h1 class="mt-4 mb-3">Nuestras Actividades</h1>
 
     <!-- Portfolio Item Row -->
     <div class="row">
@@ -20,7 +20,7 @@
         </div>
 
         <div class="col-md-4">
-            <h3 class="my-3">{{ activity.activityName }}</h3>
+            <h3 class="my-3">{{ activity.activityName | capitalize}}</h3>
             {{ activity.description | raw }}
             <h3 class="my-3">¿Cuando?</h3>
             <ul>
@@ -38,7 +38,7 @@
     </div>
     <!-- /.row -->
 
-    <!-- Related Projects Row -->
+    {#<!-- Related Projects Row -->
     <h3 class="my-4">Related Projects</h3>
 
     <div class="row">
@@ -68,7 +68,7 @@
         </div>
 
     </div>
-    <!-- /.row -->
+    <!-- /.row -->#}
 
 </div>
 <!-- /.container -->

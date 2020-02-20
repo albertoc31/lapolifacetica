@@ -14,6 +14,7 @@ use AppBundle\Form\ContactType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 // librerias de autenticacion y seguridad
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -21,10 +22,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class DefaultController extends Controller
 {
-    private static $max_activities = 3;
+    private static $max_activities = 6;
 
     /**
-     * @Route("/{pagina}", name="homepage")
+     * @Route("/", name="homepage")
      */
     public function indexAction(Request $request, $pagina = 1)
     {
@@ -36,7 +37,7 @@ class DefaultController extends Controller
         /* $activities = $repository->findByDestacado(true); */
 
         // sacamos las actividades según la paginacion
-        $activities = $repository->paginaActividades($pagina, $numActivities);
+        $activities = $repository->paginaActividades($pagina, $numActivities, $destacado = true);
 
         // Capturamos repositorio de tabla Asociaciones
         /*$repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
@@ -51,7 +52,7 @@ class DefaultController extends Controller
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'activities' => $activities,
             /*'asociaciones' => $asociaciones,*/
-            'paginaActual' => $pagina,
+/*            'paginaActual' => $pagina,*/
         ]);
     }
 
@@ -87,18 +88,29 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/actividades/", name="actividades")
+     * @Route("/actividades/{num}", name="actividades")
      */
-    public function actividadesAction(Request $request, $pagina = 1)
+    public function actividadesAction(Request $request, $num = 1)
     {
         // Capturamos repositorio de tabla Activity
         $repository = $this->getDoctrine()->getRepository(Activity::class);
+
         // sacamos las actividades según la paginacion
-        $activities = $repository->paginaActividades($pagina, $this::$max_activities);
+        $activities = $repository->paginaActividades($num, $this::$max_activities, $destacado = false);
+
+        /*foreach ($activities as $activity) {
+            var_dump($activity); die();
+            $associations = $activity->getAsociaciones();
+            foreach ($associations as $association) {
+                $name = $association->getName();
+                var_dump($name); die();
+            }
+        }*/
 
         return $this->render('home/activities.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
             'activities' => $activities,
+            'paginaActual' => $num,
         ]);
     }
 
@@ -249,7 +261,10 @@ class DefaultController extends Controller
 
         // creates an user
         $user = new User();
-        $form = $this->createForm(UserType::class, $user, ['choices' => $choices]);
+        $form = $this->createForm(UserType::class, $user, [
+            'choices' => $choices,
+            'submitLabel' => 'Registrarse'
+        ]);
 
 
         // 2) handle the submit (will only happen on POST)
@@ -260,8 +275,8 @@ class DefaultController extends Controller
             $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
             $user->setPassword($password);
 
-            // 3b) $username = $email
-            $user->setUsername($user->getEmail());
+            /*// 3b) $username = $email
+            $user->setUsername($user->getEmail());*/
 
             // 3c) ROLES
             $user->setRoles(['ROLE_USER']);
@@ -281,6 +296,86 @@ class DefaultController extends Controller
             'home/register.html.twig',
             ['form' => $form->createView()]
         );
+    }
+
+    /**
+     * @Route("/editSelf/{id}", name="editSelf")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     */
+    public function editSelfAction(Request $request, $id = null)
+    {
+
+        $user = $this->getUser();
+        $user_id = $user->getID();
+
+        if ($user_id != $id) {
+            return $this->redirectToRoute('homepage');
+        }
+        $goHome = false;
+
+        if ($id != null) {
+
+            $repository = $this->getDoctrine()->getRepository(User::class);
+            $user = $repository->findOneById($id);
+
+            if ($user != null) {
+
+                // Capturamos repositorio de tabla Asociaciones
+                $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+                $asociaciones = $repository_asc->findAll();
+                $asociaciones_array = array_map( function(Asociacion $asociacion){return [$asociacion->getId(),$asociacion->getName()];} , $asociaciones );
+                $choices = [];
+                foreach ($asociaciones_array as $asoc){
+                    //print_r($asoc);
+                    $choices[$asoc[1]] = $asoc[0];
+                }
+
+                $form = $this->createForm(UserType::class, $user, [
+                    'submitLabel' => 'Guardar Usuario',
+                    'choices' => $choices,
+                    'selfEdit' => true,
+                    'validation_groups' => ['edition'],
+                ]);
+
+                // Recogemos la información
+                $form->handleRequest($request);
+
+                $userNew = $form->getData();
+
+                $data = json_decode($request->getContent(), true);
+                $method = $request->getMethod();
+
+                /*var_dump($request->getContent()); die(' === eso');*/
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    // $form->getData() holds the submitted values
+                    // but, the original `$user` variable has also been updated
+                    $userNew = $form->getData();
+                    // almacenar la categoria
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($userNew);
+                    $entityManager->flush();
+
+                    return $this->redirectToRoute('homepage');
+                }
+
+                return $this->render('administracion/editUsuario.html.twig', [
+                    'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+                    'form' => $form->createView(),
+                    'selfEdit' => true,
+                ]);
+            } else {
+                $goHome = true;
+            }
+        } else {
+            $goHome = true;
+        }
+
+        if ($goHome) {
+            // redirects to the "homepage" route
+            return $this->redirectToRoute('homepage');
+        }
     }
 
     private function sendEmail($data){

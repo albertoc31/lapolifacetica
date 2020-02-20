@@ -296,7 +296,7 @@ class Activity
 
 
     /**
-     * Add asociacione
+     * Add asociaciones
      *
      * @param \AppBundle\Entity\Asociacion $asociaciones
      *
@@ -310,7 +310,7 @@ class Activity
     }
 
     /**
-     * Remove asociacione
+     * Remove asociaciones
      *
      * @param \AppBundle\Entity\Asociacion $asociaciones
      */

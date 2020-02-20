@@ -13,10 +13,15 @@ class ActivityRepository extends \Doctrine\ORM\EntityRepository
     /*
      * Función que devuelve las actividades para una página con un número de elementos
      */
-    public function paginaActividades($pagina = 1, $numActivities = 3){
+    public function paginaActividades($pagina = 1, $numActivities = 3, $destacado = false){
+        settype($pagina, "integer");
+        if ($pagina < 1){
+            $pagina = 1;
+        }
         /*var_dump($pagina, $numActivities);die();*/
         $query = $this->createQueryBuilder('a')
-            ->where('a.destacado = 1')
+            ->where("a.destacado >= :condition1")
+            ->setParameter('condition1', $destacado)
             ->setFirstResult($numActivities*($pagina - 1))
             ->setMaxResults($numActivities)
             ->orderBy('a.fechaFin', 'DESC')

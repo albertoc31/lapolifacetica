@@ -9,6 +9,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Activity;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Asociacion;
+use AppBundle\Entity\User;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,12 +20,27 @@ use Symfony\Component\Routing\Annotation\Route;
 use AppBundle\Form\ActivityType;
 use AppBundle\Form\CategoryType;
 use AppBundle\Form\AsociacionType;
+use AppBundle\Form\UserType;
 
 /**
  * @Route("/administracion")
  */
 
 class AdminController extends Controller {
+
+
+    /**
+     * @Route("/", name="administracion")
+     */
+    public function indexAction(Request $request)
+    {
+        //var_dump($asociaciones);die();
+        // replace this example code with whatever you need
+        return $this->render('administracion/admin.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+        ]);
+    }
+
     /**
      * @Route("/nuevaActividad", name="nuevaActividad")
      */
@@ -38,7 +54,8 @@ class AdminController extends Controller {
 
         // creates an activity and gives it some dummy data for this example
         $activity = new Activity();
-        $form = $this->createForm(ActivityType::class, $activity);
+        $form = $this->createForm(ActivityType::class, $activity,
+            ['submitLabel' => 'Guardar Actividad']);
 
         // Recogemos la información
         $form->handleRequest($request);
@@ -71,7 +88,7 @@ class AdminController extends Controller {
             $entityManager->persist($activity);
             $entityManager->flush();
 
-            return $this->redirectToRoute('activity', ['id' => $activity->getId()]);
+            return $this->redirectToRoute('actividad', ['id' => $activity->getId()]);
         }
 
         // replace this example code with whatever you need
@@ -103,6 +120,8 @@ class AdminController extends Controller {
                 $form = $this->createForm(ActivityType::class, $activity, [
                     'requireFoto' => false,
                     'submitLabel' => 'Guardar Actividad',
+                    'oldFoto' => $oldFoto,
+
                 ]);
 
                 // Recogemos la información
@@ -138,7 +157,7 @@ class AdminController extends Controller {
                     $entityManager->persist($activityNew);
                     $entityManager->flush();
 
-                    return $this->redirectToRoute('activity', ['id' => $activity->getId()]);
+                    return $this->redirectToRoute('actividad', ['id' => $activity->getId()]);
                 }
 
                 return $this->render('administracion/nuevaActividad.html.twig', [
@@ -168,7 +187,7 @@ class AdminController extends Controller {
     {
         // creates an activity and gives it some dummy data for this example
         $category = new Category();
-        $form = $this->createForm(CategoryType::class, $category, ['requiredFoto'=>false]);
+        $form = $this->createForm(CategoryType::class, $category, ['allow_file_upload'=>false]);
 
         // Recogemos la información
         $form->handleRequest($request);
@@ -197,6 +216,58 @@ class AdminController extends Controller {
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/editCategoria/{id}", name="editCategoria")
+     */
+    public function editCategoriaAction(Request $request, $id = null)
+    {
+        $goNew = false;
+
+        if ($id != null) {
+
+            $repository = $this->getDoctrine()->getRepository(Category::class);
+            $category = $repository->findOneById($id);
+
+            if ($category != null) {
+
+                $form = $this->createForm(CategoryType::class, $category, [
+                    'submitLabel' => 'Guardar Categoria',
+                ]);
+
+                // Recogemos la información
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    // $form->getData() holds the submitted values
+                    // but, the original `$category` variable has also been updated
+                    $categoryNew = $form->getData();
+                    // almacenar la categoria
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($categoryNew);
+                    $entityManager->flush();
+
+                    return $this->redirectToRoute('category', ['id' => $category->getId()]);
+                }
+
+                return $this->render('administracion/nuevaCategoria.html.twig', [
+                    'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+                    'form' => $form->createView(),
+                    'isEdit' => true,
+                ]);
+            } else {
+                $goNew = true;
+            }
+        } else {
+            $goNew = true;
+        }
+
+        if ($goNew) {
+            // redirects to the "nuevaCategoria" route
+            return $this->redirectToRoute('nuevaCategoria');
+        }
     }
 
     /**
@@ -338,6 +409,78 @@ class AdminController extends Controller {
             return $this->redirectToRoute('nuevaAsociacion');
         }
 
+    }
+
+    /**
+     * @Route("/editUsuario/{id}", name="editUsuario")
+     */
+    public function editUsuarioAction(Request $request, $id = null)
+    {
+        $goAdmin = false;
+
+        if ($id != null) {
+
+            $repository = $this->getDoctrine()->getRepository(User::class);
+            $user = $repository->findOneById($id);
+
+            if ($user != null) {
+
+                // Capturamos repositorio de tabla Asociaciones
+                $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+                $asociaciones = $repository_asc->findAll();
+                $asociaciones_array = array_map( function(Asociacion $asociacion){return [$asociacion->getId(),$asociacion->getName()];} , $asociaciones );
+                $choices = [];
+                foreach ($asociaciones_array as $asoc){
+                    //print_r($asoc);
+                    $choices[$asoc[1]] = $asoc[0];
+                }
+
+                $form = $this->createForm(UserType::class, $user, [
+                    'submitLabel' => 'Guardar Usuario',
+                    'choices' => $choices,
+                    'isEdit' => true,
+                    'validation_groups' => ['edition'],
+                ]);
+
+                // Recogemos la información
+                $form->handleRequest($request);
+
+                $userNew = $form->getData();
+
+                $data = json_decode($request->getContent(), true);
+                $method = $request->getMethod();
+
+                /*var_dump($request->getContent()); die(' === eso');*/
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    // $form->getData() holds the submitted values
+                    // but, the original `$user` variable has also been updated
+                    $userNew = $form->getData();
+                    // almacenar la categoria
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($userNew);
+                    $entityManager->flush();
+
+                    return $this->redirectToRoute('administracion');
+                }
+
+                return $this->render('administracion/editUsuario.html.twig', [
+                    'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+                    'form' => $form->createView(),
+                    'isEdit' => true,
+                ]);
+            } else {
+                $goAdmin = true;
+            }
+        } else {
+            $goAdmin = true;
+        }
+
+        if ($goAdmin) {
+            // redirects to the "administracion" route
+            return $this->redirectToRoute('administracion');
+        }
     }
 
         private function generateUniqueFileName()

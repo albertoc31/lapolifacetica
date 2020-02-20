@@ -57,15 +57,16 @@
         <!-- Portfolio Section -->
         <h2>Actividades</h2>
 
+        {#{% dump activities %}#}
         <div class="row">
-            {% if activity is defined and activity is not empty %}
+            {% if activities is defined and activities is not empty %}
             {% for activity in activities %}
                 <div class="col-lg-4 col-sm-6 portfolio-item">
                     <div class="card h-100">
-                        <a href="{{ path('activity', {'id':activity.id}) }}"><img class="card-img-top" src="{%- if activity.foto|length > 0 -%}{{ asset(activityImg ~ activity.foto) }}{%- else -%}http://placehold.it/700x400{%- endif -%}" alt=""></a>
+                        <a href="{{ path('actividad', {'id':activity.id}) }}"><img class="card-img-top" src="{%- if activity.foto|length > 0 -%}{{ asset(activityImg ~ activity.foto) }}{%- else -%}http://placehold.it/700x400{%- endif -%}" alt=""></a>
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a href="{{ path('activity', {'id':activity.id}) }}">{{ activity.activityName }}</a>
+                                <a href="{{ path('actividad', {'id':activity.id}) }}">{{ activity.activityName | capitalize}}</a>
                             </h4>
                             <p class="card-text">{{ activity.shortDescription }}</p>
                         </div>
@@ -77,8 +78,10 @@
         </div>
         <!-- /.row -->
 
+        <button class="btn btn-primary"><a class="" href="{{ path('actividades', {'num':'1'}) }}">Ver más actividades</a></button>
+
         <!-- Pagination -->
-        <ul class="pagination justify-content-center">
+        {#<ul class="pagination justify-content-center">
             {% if paginaActual > 1 %}
             <li class="page-item">
                 <a class="page-link" href="{{ path('homepage', {pagina: paginaActual-1 < 1 ? 1 : paginaActual-1 }) }}" aria-label="Previous">
@@ -102,7 +105,7 @@
                 </a>
             </li>
             {% endif %}
-        </ul>
+        </ul>#}
 
     </div>
 

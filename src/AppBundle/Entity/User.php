@@ -5,12 +5,14 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * User
  *
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
+ * @UniqueEntity("email",message="Este email ya está en uso")
  */
 class User implements UserInterface, \Serializable
 {
@@ -51,6 +53,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(name="is_active", type="boolean")
+     * @Assert\NotIdenticalTo("Mary")(groups={"edition"})
      */
     private $isActive;
 
@@ -64,7 +67,7 @@ class User implements UserInterface, \Serializable
 
     public function __construct()
     {
-        $this->isActive = true;
+        $this->isActive = 0;
         // may not be needed, see section on salt below
         // $this->salt = md5(uniqid('', true));
     }
@@ -153,6 +156,16 @@ class User implements UserInterface, \Serializable
     public function setAsociacion($asociacion)
     {
         return $this->asociacion = $asociacion;
+    }
+
+    public function getActive()
+    {
+        return $this->isActive;
+    }
+
+    public function setActive($isActive)
+    {
+        return $this->isActive = $isActive;
     }
 
     /** @see \Serializable::serialize() */

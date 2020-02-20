@@ -38,3 +38,24 @@ body {
 .btn-primary {
   margin-bottom: 10px;
 }
+
+.btn-primary {
+  margin-bottom: 10px;
+}
+.btn-primary a{
+  color: #ffffff;
+  text-decoration: none ;
+}
+.btn-primary:hover a{
+  color: #afd4fb;
+  text-decoration: none ;
+}
+
+.form-error {
+  font-size: .9em;
+  color: #694a4e;
+  border: 1px solid #dcbdba;
+  background-color: #fce6df;
+  padding: 0 5px 0 5px;
+  margin-bottom: 10px;
+}
