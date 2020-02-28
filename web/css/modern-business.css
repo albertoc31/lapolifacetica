@@ -59,3 +59,73 @@ body {
   padding: 0 5px 0 5px;
   margin-bottom: 10px;
 }
+
+
+/* DivTable.com */
+.divTable{
+  display: table;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+.divTableRow {
+  display: table-row;
+}
+.divTableHeading {
+  background-color: #EEE;
+  display: table-header-group;
+}
+.divTableCell, .divTableHead {
+  border: 1px solid #dedede;
+  display: table-cell;
+  padding: 2px 5px 5px 5px;
+
+  color: #555555;
+  font-size: 0.9em;
+  line-height: 1em;
+}
+.divTableHead {
+  padding: 10px 5px 10px 5px;
+}
+.divTableCell.center, .divTableHead.center {
+  text-align: center;
+}
+.divTableHeading {
+  background-color: #EEE;
+  display: table-header-group;
+  font-weight: bold;
+}
+.divTableFoot {
+  background-color: #EEE;
+  display: table-footer-group;
+  font-weight: bold;
+}
+.divTableBody {
+  display: table-row-group;
+}
+
+span.activo {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-bottom: -5px;
+  background-color: lawngreen;
+}
+span.inactivo {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-bottom: -5px;
+  background-color: red;
+}
+
+.divTableCell .btn-primary {
+  margin: 2px;
+  font-size: 0.9rem;
+  padding: 0.2rem .5rem;
+}
+
+.width30 {
+  width: 30%;
+}

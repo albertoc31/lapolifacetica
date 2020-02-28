@@ -1,0 +1,8 @@
+
+var/cache/
+
+var/sessions/
+
+var/logs/
+
+vendor/
