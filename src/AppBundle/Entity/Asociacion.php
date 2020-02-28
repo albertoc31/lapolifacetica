@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Asociacion
@@ -63,6 +64,21 @@ class Asociacion
      */
     private $miembrosIds;
 
+    /**
+     * Many Activities belongs to Many Asociations.
+     * @ORM\ManyToMany(targetEntity="Activity")
+     * @ORM\JoinTable(name="asociaciones_activities",
+     *      joinColumns={@ORM\JoinColumn(name="asociaciones", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id")}
+     *      )
+     */
+    private $activities;
+
+    public function __construct()
+    {
+        $this->activities = new ArrayCollection();
+    }
+
 
     /**
      * Get id
@@ -103,7 +119,7 @@ class Asociacion
      *
      * @param string $description
      *
-     * @return Activity
+     * @return Asociacion
      */
     public function setDescription($description)
     {
@@ -127,7 +143,7 @@ class Asociacion
      *
      * @param string $shortDescription
      *
-     * @return Activity
+     * @return Asociacion
      */
     public function setShortDescription($shortDescription)
     {
@@ -151,7 +167,7 @@ class Asociacion
      *
      * @param string $foto
      *
-     * @return Activity
+     * @return Asociacion
      */
     public function setFoto($foto)
     {
@@ -216,6 +232,30 @@ class Asociacion
     public function getMiembrosIds()
     {
         return $this->miembrosIds;
+    }
+
+    /**
+     * Set activities
+     *
+     * @param integer $activities
+     *
+     * @return Asociacion
+     */
+    public function setActivities($activities)
+    {
+        $this->activities = $activities;
+
+        return $this;
+    }
+
+    /**
+     * Get activities
+     *
+     * @return int
+     */
+    public function getActivities()
+    {
+        return $this->activities;
     }
 
     /**

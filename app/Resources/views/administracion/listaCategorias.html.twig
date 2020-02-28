@@ -1,0 +1,54 @@
+{# Pagina Nueva Categoria #}
+{% extends 'base.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion Lista Categorias{% endblock %}
+
+{# BODY #}
+{% block body %}
+    <div class="container">
+        <h1 class="mt-4 mb-3">Listado de Categorias</h1>
+
+        <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-lg-3 mb-4">
+                <div class="list-group">
+                    <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
+                    <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
+                    <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
+                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
+                </div>
+            </div>
+
+            <div class="col-lg-9 mb-4">
+                {% if categorias is defined and categorias is not empty %}
+                        <div class="divTable">
+                            <div class="divTableHeading">
+                                <div class="divTableRow">
+                                    <div class="divTableHead">Nombre Categoría</div>
+                                    <div class="divTableHead">Descripción</div>
+                                    <div class="divTableHead center">Acción</div>
+                                </div>
+                            </div>
+                            <div class="divTableBody">
+                    {% for categoria in categorias %}
+                                <div class="divTableRow">
+                                    <div class="divTableCell">{{ categoria.name }}</div>
+                                    <div class="divTableCell">{{ categoria.description | raw}}</div>
+                                    <div class="divTableCell center"><button class="btn btn-primary"><a class="" href="{{ path('editCategoria', {'id':categoria.id}) }}">Edita</a></button></div>
+                                </div>
+                    {% endfor %}
+                            </div>
+                        </div>
+                        <!-- DivTable.com -->
+                {% endif %}
+                <button class="btn btn-primary"><a class="" href="{{ path('nuevaCategoria') }}">Nueva Categoría</a></button>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+

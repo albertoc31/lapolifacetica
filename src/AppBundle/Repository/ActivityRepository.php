@@ -28,4 +28,19 @@ class ActivityRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery();
         return $query->getResult();
     }
+
+    public function getByAssociation($id)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->join('c.asociaciones', 'aa')
+            ->where('aa = :id_asociacion')
+            ->setParameter('id_asociacion', $id)
+            ->getQuery();
+        return $query->getResult();
+
+        /*$qb = $this->createQueryBuilder('q');
+        $qb->join('q.asociaciones_activities', 'aa')
+            ->where($qb->expr()->eq('aa.asociaciones', $id));
+        return $qb;*/
+    }
 }

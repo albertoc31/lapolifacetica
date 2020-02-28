@@ -12,6 +12,7 @@ use AppBundle\Entity\Asociacion;
 use AppBundle\Entity\User;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,6 +35,14 @@ class AdminController extends Controller {
      */
     public function indexAction(Request $request)
     {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        /*$logged_user = $this->getUser();
+        var_dump($logged_user->getActive());die(' == ala');*/
+
         //var_dump($asociaciones);die();
         // replace this example code with whatever you need
         return $this->render('administracion/admin.html.twig', [
@@ -46,11 +55,10 @@ class AdminController extends Controller {
      */
     public function nuevaActividadAction(Request $request)
     {
-
-        /*if (!is_null($request)){
-            $datos = $request->request->all();
-            var_dump($datos);
-        }*/
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
 
         // creates an activity and gives it some dummy data for this example
         $activity = new Activity();
@@ -92,7 +100,7 @@ class AdminController extends Controller {
         }
 
         // replace this example code with whatever you need
-        return $this->render('administracion/nuevaActividad.html.twig', [
+        return $this->render('administracion/editActividad.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'form' => $form->createView(),
         ]);
@@ -103,11 +111,31 @@ class AdminController extends Controller {
      */
     public function editActividadAction(Request $request, $id = null)
     {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
         $goNew = false;
+        $repository = $this->getDoctrine()->getRepository(Activity::class);
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $logged_user = $this->getUser();
+            $id_asociacion = $logged_user->getAsociacion();
+
+            $actividades = $repository->getByAssociation($id_asociacion);
+            $act_array = [];
+            foreach ($actividades as $actividad) {
+                $act_array[] = $actividad->getId();
+            }
+
+            if (!in_array($id, $act_array)) {
+                $id = null;
+            }
+            /*var_dump($actividades); die (' ==> bye');*/
+        }
 
         if ($id != null) {
 
-            $repository = $this->getDoctrine()->getRepository(Activity::class);
             $activity = $repository->findOneById($id);
 
             if ($activity != null) {
@@ -160,7 +188,7 @@ class AdminController extends Controller {
                     return $this->redirectToRoute('actividad', ['id' => $activity->getId()]);
                 }
 
-                return $this->render('administracion/nuevaActividad.html.twig', [
+                return $this->render('administracion/editActividad.html.twig', [
                     'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
                     'form' => $form->createView(),
                     'oldFoto' => $oldFoto,
@@ -185,6 +213,11 @@ class AdminController extends Controller {
      */
     public function nuevaCategoriaAction(Request $request)
     {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
         // creates an activity and gives it some dummy data for this example
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category, ['allow_file_upload'=>false]);
@@ -212,7 +245,7 @@ class AdminController extends Controller {
         }
 
         // replace this example code with whatever you need
-        return $this->render('administracion/nuevaCategoria.html.twig', [
+        return $this->render('administracion/editCategoria.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'form' => $form->createView(),
         ]);
@@ -223,6 +256,11 @@ class AdminController extends Controller {
      */
     public function editCategoriaAction(Request $request, $id = null)
     {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
         $goNew = false;
 
         if ($id != null) {
@@ -252,7 +290,7 @@ class AdminController extends Controller {
                     return $this->redirectToRoute('category', ['id' => $category->getId()]);
                 }
 
-                return $this->render('administracion/nuevaCategoria.html.twig', [
+                return $this->render('administracion/editCategoria.html.twig', [
                     'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
                     'form' => $form->createView(),
                     'isEdit' => true,
@@ -275,6 +313,11 @@ class AdminController extends Controller {
      */
     public function nuevaAsociacionAction(Request $request)
     {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_SUPER_ADMIN" in roles and user.getActive() == 1'
+        ));
+
         // creates an activity and gives it some dummy data for this example
         $asociacion = new Asociacion();
         $form = $this->createForm(AsociacionType::class, $asociacion);
@@ -317,7 +360,7 @@ class AdminController extends Controller {
         }
 
         // replace this example code with whatever you need
-        return $this->render('administracion/nuevaAsociacion.html.twig', [
+        return $this->render('administracion/editAsociacion.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'form' => $form->createView(),
             //'oldFoto' => '' // por consistencia con la edicion
@@ -329,7 +372,22 @@ class AdminController extends Controller {
      */
     public function editAsociacionAction(Request $request, $id = null)
     {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
         $goNew = false;
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $logged_user = $this->getUser();
+            $id_asociacion = $logged_user->getAsociacion();
+
+            if ( $id_asociacion != $id ) {
+                $id = null;
+            }
+            /*var_dump($actividades); die (' ==> bye');*/
+        }
 
         if ($id != null) {
 
@@ -391,7 +449,7 @@ class AdminController extends Controller {
                     return $this->redirectToRoute('asociacion', ['id' => $asociacion->getId()]);
                 }
 
-                return $this->render('administracion/nuevaAsociacion.html.twig', [
+                return $this->render('administracion/editAsociacion.html.twig', [
                     'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
                     'form' => $form->createView(),
                     'oldFoto' => $oldFoto,
@@ -406,7 +464,7 @@ class AdminController extends Controller {
 
         if ($goNew) {
             // redirects to the "nuevaAsociacion" route
-            return $this->redirectToRoute('nuevaAsociacion');
+            return $this->redirectToRoute('administracion');
         }
 
     }
@@ -416,12 +474,26 @@ class AdminController extends Controller {
      */
     public function editUsuarioAction(Request $request, $id = null)
     {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
         $goAdmin = false;
 
         if ($id != null) {
 
             $repository = $this->getDoctrine()->getRepository(User::class);
             $user = $repository->findOneById($id);
+
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                $logged_user = $this->getUser();
+                $id_asociacion = $logged_user->getAsociacion();
+                if ($user->getAsociacion() !== $id_asociacion){
+                    // nos cargamos el objeto user
+                    $user = null;
+                }
+            }
 
             if ($user != null) {
 
@@ -483,7 +555,126 @@ class AdminController extends Controller {
         }
     }
 
-        private function generateUniqueFileName()
+    /**
+     * @Route("/listaUsuarios/", name="listaUsuarios")
+     */
+    public function listaUsuariosAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+        $asociaciones = [];
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $user = $this->getUser();
+            $id_asociacion = $user->getAsociacion();
+
+            $asociaciones[$id_asociacion] = $repository_asc->findOneById($id_asociacion)->getName();
+
+            // get usuarios for this association
+            $usuarios = $repository->findBy(
+                ['asociacion' => $id_asociacion]
+            );
+        } else {
+            $usuarios = $repository->findAll();
+
+            $asociations = $repository_asc->findAll();
+            $asociaciones = [];
+            foreach ($asociations as $association) {
+                $asociaciones[$association->getID()] = $association->getName();
+            }
+            /*var_dump($asociaciones); die(' == bye');*/
+        }
+
+        return $this->render('administracion/listaUsuarios.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'usuarios' => $usuarios,
+            'asociations' => $asociaciones
+        ]);
+    }
+
+    /**
+     * @Route("/listaCategorias/", name="listaCategorias")
+     */
+    public function listaCategoriasAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        $repository = $this->getDoctrine()->getRepository(Category::class);
+        $categorias = $repository->findAll();
+        return $this->render('administracion/listaCategorias.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'categorias' => $categorias,
+        ]);
+    }
+
+    /**
+     * @Route("/listaAsociaciones/", name="listaAsociaciones")
+     */
+    public function listaAsociacionesAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        $repository = $this->getDoctrine()->getRepository(Asociacion::class);
+        $asociaciones = [];
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $logged_user = $this->getUser();
+            $id_asociacion = $logged_user->getAsociacion();
+            $asociaciones[] = $repository->findOneById($id_asociacion);
+        } else {
+            $asociaciones = $repository->findAll();
+        }
+
+        $repository = $this->getDoctrine()->getRepository(Category::class);
+        $categorias = $repository->findAll();
+        return $this->render('administracion/listaAsociaciones.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'asociaciones' => $asociaciones,
+        ]);
+    }
+
+    /**
+     * @Route("/listaActividades/", name="listaActividades")
+     */
+    public function listaActividadesAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        $repository = $this->getDoctrine()->getRepository(Activity::class);
+        $actividades = [];
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $logged_user = $this->getUser();
+            $id_asociacion = $logged_user->getAsociacion();
+            $actividades = $repository->getByAssociation($id_asociacion);
+            /*$actividades = $repository->findBy(
+                ['asociaciones' => $id_asociacion]
+            );*/
+        } else {
+            $actividades = $repository->findAll();
+        }
+
+        return $this->render('administracion/listaActividades.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'actividades' => $actividades,
+        ]);
+    }
+
+    private function generateUniqueFileName()
     {
         // md5() reduces the similarity of the file names generated by
         // uniqid(), which is based on timestamps

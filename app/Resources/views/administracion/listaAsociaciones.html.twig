@@ -1,0 +1,56 @@
+{# Pagina Nueva Categoria #}
+{% extends 'base.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion  Lista Asociaciones{% endblock %}
+
+{# BODY #}
+{% block body %}
+    <div class="container">
+        <h1 class="mt-4 mb-3">Listado de Asociaciones</h1>
+
+        <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-lg-3 mb-4">
+                <div class="list-group">
+                    <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
+                    <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
+                    <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
+                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
+                </div>
+            </div>
+
+            <div class="col-lg-9 mb-4">
+                {% if asociaciones is defined and asociaciones is not empty %}
+                        <div class="divTable">
+                            <div class="divTableHeading">
+                                <div class="divTableRow">
+                                    <div class="divTableHead width30">Nombre Asociación</div>
+                                    <div class="divTableHead">Descripción Corta</div>
+                                    <div class="divTableHead center">Acción</div>
+                                </div>
+                            </div>
+                            <div class="divTableBody">
+                    {% for asociacion in asociaciones %}
+                                <div class="divTableRow">
+                                    <div class="divTableCell width30">{{ asociacion.name }}</div>
+                                    <div class="divTableCell">{{ asociacion.shortDescription | raw}}</div>
+                                    <div class="divTableCell center"><button class="btn btn-primary"><a class="" href="{{ path('editAsociacion', {'id':asociacion.id}) }}">Edita</a></button></div>
+                                </div>
+                    {% endfor %}
+                            </div>
+                        </div>
+                        <!-- DivTable.com -->
+                {% endif %}
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <button class="btn btn-primary"><a class="" href="{{ path('nuevaAsociacion') }}">Nueva Asociación</a></button>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+

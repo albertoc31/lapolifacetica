@@ -160,7 +160,7 @@ class User implements UserInterface, \Serializable
 
     public function getActive()
     {
-        return $this->isActive;
+        return boolval($this->isActive);
     }
 
     public function setActive($isActive)

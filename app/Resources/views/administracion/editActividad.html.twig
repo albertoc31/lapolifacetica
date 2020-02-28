@@ -17,11 +17,21 @@
             {% endif %}</h1>
 
         <div class="row">
-            <div class="col-md-8">
-    {{ form_start(form) }}
+            <!-- Sidebar Column -->
+            <div class="col-lg-3 mb-4">
+                <div class="list-group">
+                    <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
+                    <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
+                    <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
+                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
+                </div>
+            </div>
+
+            <div class="col-lg-9 mb-4">
+            {{ form_start(form) }}
 
              {#   esto dibuja los campos #}
-    {{ form_widget(form) }}
+            {{ form_widget(form) }}
 {#
  Esto es el ejemplo de renderizar manualmente cada campo del formulario
                 {{ form_errors(form) }}
@@ -37,8 +47,7 @@
                 </div>
 #}
 
-
-    {{ form_end(form) }}
+            {{ form_end(form) }}
             </div>
         </div>
 

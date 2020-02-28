@@ -29,7 +29,7 @@ class Activity
     private $category;
 
     /**
-     * Many Activities belongs to Many Groups.
+     * Many Activities belongs to Many Asociations.
      * @ORM\ManyToMany(targetEntity="Asociacion")
      * @ORM\JoinTable(name="asociaciones_activities",
      *      joinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id")},

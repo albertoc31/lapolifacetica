@@ -41,7 +41,7 @@ class ActivityType extends AbstractType
 
         $builder
             ->add('activity_name', TextType::class, ['label' => 'Nombre', 'attr' => ['class' => 'form-control']])
-            ->add('category', EntityType::class, ['class' => 'AppBundle:Category', 'attr' => ['class' => 'form-control']])
+            ->add('category', EntityType::class, ['label' => 'Categoría','class' => 'AppBundle:Category', 'attr' => ['class' => 'form-control']])
             ->add('description', CKEditorType::class, ['label' => 'Descripción'])
             ->add('short_description', TextType::class, ['label' => 'Descripción Breve', 'attr' => ['class' => 'form-control']])
             ->add('foto', FileType::class, ['label' => 'Imagen', 'attr' => ['class' => 'form-control', 'onchange' => 'onChange(event)', 'oldFoto' => $options['oldFoto']], "data_class" => null, 'required' => $options['requireFoto']])
