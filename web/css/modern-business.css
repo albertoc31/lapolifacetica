@@ -60,6 +60,11 @@ body {
   margin-bottom: 10px;
 }
 
+/* hack de datepicker */
+.datepicker > div {
+  display: inherit;
+}
+
 
 /* DivTable.com */
 .divTable{
