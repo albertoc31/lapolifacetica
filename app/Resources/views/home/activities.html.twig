@@ -27,7 +27,7 @@
                             <p class="card-text">{{ activity.shortDescription }}</p>
                             {#{%  dump activity.asociaciones %}#}
                             {% for asociacion in activity.asociaciones %}
-                                <p class="">{{ asociacion.name }}</p>
+                                <button type="button" class="btn btn-primary btn-sm">{{ asociacion.name }}</button>
                             {% endfor %}
                         </div>
                     </div>
