@@ -15,7 +15,7 @@ html, body {
 
 footer {
   display: table-row;
-  height: 0;
+  height: 5rem;
 }
 
 footer.py-5 {
