@@ -18,8 +18,8 @@ footer {
   height: 0;
 }
 
-footer .container {
-  margin-top: 1rem;
+footer.py-5 {
+  padding-top: 2rem!important;
 }
 /* ===  END  === */
 
