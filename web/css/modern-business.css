@@ -61,7 +61,7 @@ body {
 }
 
 /* hack de datepicker */
-.datepicker > div {
+.datepicker > .datepicker-days {
   display: inherit;
 }
 
