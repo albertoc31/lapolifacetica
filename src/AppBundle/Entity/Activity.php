@@ -30,7 +30,7 @@ class Activity
 
     /**
      * Many Activities belongs to Many Asociations.
-     * @ORM\ManyToMany(targetEntity="Asociacion")
+     * @ORM\ManyToMany(targetEntity="Asociacion", inversedBy="activities")
      * @ORM\JoinTable(name="asociaciones_activities",
      *      joinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="asociaciones", referencedColumnName="id")}

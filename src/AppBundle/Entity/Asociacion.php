@@ -66,11 +66,7 @@ class Asociacion
 
     /**
      * Many Activities belongs to Many Asociations.
-     * @ORM\ManyToMany(targetEntity="Activity")
-     * @ORM\JoinTable(name="asociaciones_activities",
-     *      joinColumns={@ORM\JoinColumn(name="asociaciones", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="id", referencedColumnName="id")}
-     *      )
+     * @ORM\ManyToMany(targetEntity="Activity", mappedBy="asociaciones")
      */
     private $activities;
 

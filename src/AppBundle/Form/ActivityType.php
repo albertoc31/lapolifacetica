@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -46,8 +46,8 @@ class ActivityType extends AbstractType
             ->add('short_description', TextType::class, ['label' => 'Descripción Breve', 'attr' => ['class' => 'form-control']])
             ->add('foto', FileType::class, ['label' => 'Imagen', 'attr' => ['class' => 'form-control', 'onchange' => 'onChange(event)', 'oldFoto' => $options['oldFoto']], "data_class" => null, 'required' => $options['requireFoto']])
             ->add('asociaciones', EntityType::class, ['class' => 'AppBundle:Asociacion', 'multiple' => true, 'attr' => ['class' => 'form-control']])
-            ->add('fechaIni', DateTimeType::class, ['widget' => 'single_text', 'html5' => false, 'attr' => ['class' => 'js-datepicker form-control']])
-            ->add('fechaFin', DateTimeType::class, ['widget' => 'single_text', 'html5' => false, 'attr' => ['class' => 'js-datepicker form-control']])
+            ->add('fechaIni', DateType::class, ['widget' => 'single_text', 'html5' => false, 'attr' => ['class' => 'js-datepicker form-control']])
+            ->add('fechaFin', DateType::class, ['widget' => 'single_text', 'html5' => false, 'attr' => ['class' => 'js-datepicker form-control']])
             ->add('destacado', CheckboxType::class, ['label' => 'Destacar en Portada', 'required' => false])
             ->add('submit', SubmitType::class, ['label' => $options['submitLabel']])
         ;
@@ -70,7 +70,7 @@ class ActivityType extends AbstractType
             // 'required'=>['foto'=>true],   mejor no sobreescribir variables por defecto, por siaca
             'submitLabel'=>'Crear Actividad',
             'requireFoto'=>true,
-            'oldFoto'=>'hola',
+            'oldFoto'=>'',
         ));
     }
 
