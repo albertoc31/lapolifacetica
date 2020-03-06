@@ -51,18 +51,12 @@ class Asociacion
     private $foto;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="miembros", type="smallint")
-     */
-    private $miembros;
-
-    /**
      * @var array
-     *
-     * @ORM\Column(name="miembros_ids", type="simple_array", nullable=true)
+     * One asociacion has many users. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="User", mappedBy="asociacion")
+     * @ORM\Column(name="users_ids", type="simple_array", nullable=true)
      */
-    private $miembrosIds;
+    private $users;
 
     /**
      * Many Activities belongs to Many Asociations.
@@ -183,51 +177,27 @@ class Asociacion
     }
 
     /**
-     * Set miembros
+     * Set users
      *
-     * @param integer $miembros
+     * @param array $users
      *
      * @return Asociacion
      */
-    public function setMiembros($miembros)
+    public function setUsers($users)
     {
-        $this->miembros = $miembros;
+        $this->users = $users;
 
         return $this;
     }
 
     /**
-     * Get miembros
-     *
-     * @return int
-     */
-    public function getMiembros()
-    {
-        return $this->miembros;
-    }
-
-    /**
-     * Set miembrosIds
-     *
-     * @param array $miembrosIds
-     *
-     * @return Asociacion
-     */
-    public function setMiembrosIds($miembrosIds)
-    {
-        $this->miembrosIds = $miembrosIds;
-
-        return $this;
-    }
-
-    /**
-     * Get miembrosIds
+     * Get users
      *
      * @return array
      */
-    public function getMiembrosIds()
+    public function getUsers()
     {
-        return $this->miembrosIds;
+        return $this->users;
     }
 
     /**
@@ -257,7 +227,7 @@ class Asociacion
     /**
      * Convierte objeto en String
      *
-     * Lo usamos para sacar los nombres de las asociaciones
+     * Lo usamos para sacar los nombres de los users
      */
     public function __toString()
     {

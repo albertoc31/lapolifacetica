@@ -286,6 +286,17 @@ class DefaultController extends Controller
             $entityManager->persist($user);
             $entityManager->flush();
 
+            // 5 Vamos a almacenar en asociacion su pertenencia a ella
+
+            $asociacion_id = $user->getAsociacion();
+            $asociacion = $repository_asc->findOneById($asociacion_id);
+            $users = $asociacion->getUsers();
+            $users[] = $user->getId();
+            /*var_dump($user); die(' === eso');*/
+            $asociacion->setUsers($users);
+            $entityManager->persist($asociacion);
+            $entityManager->flush();
+
             // ... do any other work - like sending them an email, etc
             // maybe set a "flash" success message for the user
 
@@ -340,21 +351,28 @@ class DefaultController extends Controller
                 // Recogemos la información
                 $form->handleRequest($request);
 
-                $userNew = $form->getData();
+                /*$userNew = $form->getData();
 
                 $data = json_decode($request->getContent(), true);
-                $method = $request->getMethod();
-
-                /*var_dump($request->getContent()); die(' === eso');*/
+                $method = $request->getMethod();*/
 
                 if ($form->isSubmitted() && $form->isValid()) {
                     // $form->getData() holds the submitted values
                     // but, the original `$user` variable has also been updated
                     $userNew = $form->getData();
-                    // almacenar la categoria
+
+                    // almacenar la asociacion
+                    $asociacion_id = $userNew->getAsociacion();
+                    $asociacion = $repository_asc->findOneById($asociacion_id);
+                    $users = $asociacion->getUsers();
+                    $users[] = $userNew->getId();
+                    $asociacion->setUsers($users);
+
+                    /*var_dump($users); die(' === eso');*/
 
                     $entityManager = $this->getDoctrine()->getManager();
                     $entityManager->persist($userNew);
+                    $entityManager->persist($asociacion);
                     $entityManager->flush();
 
                     return $this->redirectToRoute('homepage');

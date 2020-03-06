@@ -334,8 +334,7 @@ class AdminController extends Controller {
              * Para usar una función directa de PHP hay que escapar !!!!!
              * $asociacion->setFechaIni(new \DateTime());
             */
-            $asociacion->setMiembros(0);
-            $asociacion->setMiembrosIds([]);
+            /*$asociacion->setUsers([]);*/
 
             // Guardamos fotos
             $foto = $asociacion->getFoto();
@@ -398,9 +397,7 @@ class AdminController extends Controller {
 
                 // recojo los valores que pueden no cambiar
                 $oldFoto = $asociacion->getFoto();
-                $oldMiembros = $asociacion->getMiembros();
-                $oldMiembrosIds = $asociacion->getMiembrosIds();
-
+                $oldUsers = $asociacion->getUsers();
 
                 $form = $this->createForm(AsociacionType::class, $asociacion, [
                     'oldFoto' => $oldFoto,
@@ -436,9 +433,7 @@ class AdminController extends Controller {
                     $asociacionNew->setFoto($fileName);
 
                     // preservamos los valores que pueden no cambiar
-                    $asociacionNew->setMiembros($oldMiembros);
-                    $asociacionNew->setMiembrosIds($oldMiembrosIds);
-
+                    $asociacionNew->setUsers($oldUsers);
 
                     // almacenar la actividad
 
@@ -517,10 +512,10 @@ class AdminController extends Controller {
                 // Recogemos la información
                 $form->handleRequest($request);
 
-                $userNew = $form->getData();
+                /*$userNew = $form->getData();
 
                 $data = json_decode($request->getContent(), true);
-                $method = $request->getMethod();
+                $method = $request->getMethod();*/
 
                 /*var_dump($request->getContent()); die(' === eso');*/
 
@@ -528,10 +523,17 @@ class AdminController extends Controller {
                     // $form->getData() holds the submitted values
                     // but, the original `$user` variable has also been updated
                     $userNew = $form->getData();
-                    // almacenar la categoria
+
+                    // almacenar la asociacion
+                    $asociacion_id = $userNew->getAsociacion();
+                    $asociacion = $repository_asc->findOneById($asociacion_id);
+                    $users = $asociacion->getUsers();
+                    $users[] = $userNew->getId();
+                    $asociacion->setUsers($users);
 
                     $entityManager = $this->getDoctrine()->getManager();
                     $entityManager->persist($userNew);
+                    $entityManager->persist($asociacion);
                     $entityManager->flush();
 
                     return $this->redirectToRoute('administracion');
