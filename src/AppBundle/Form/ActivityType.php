@@ -15,7 +15,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 // Para los objetos de formulario
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -26,11 +25,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+
 // usamos CKEditor
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 
 class ActivityType extends AbstractType
 {
+    /* To check user roles, as seen in https://stackoverflow.com/questions/35433295/how-to-customize-form-field-based-on-user-roles-in-symfony2-3 */
+    private $authorization;
+    public function __construct(AuthorizationChecker $authorizationChecker)
+    {
+        $this->authorization = $authorizationChecker;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -48,9 +56,13 @@ class ActivityType extends AbstractType
             ->add('asociaciones', EntityType::class, ['class' => 'AppBundle:Asociacion', 'multiple' => true, 'attr' => ['class' => 'form-control']])
             ->add('fechaIni', DateType::class, ['widget' => 'single_text', 'html5' => false, 'attr' => ['class' => 'js-datepicker form-control']])
             ->add('fechaFin', DateType::class, ['widget' => 'single_text', 'html5' => false, 'attr' => ['class' => 'js-datepicker form-control']])
-            ->add('destacado', CheckboxType::class, ['label' => 'Destacar en Portada', 'required' => false])
-            ->add('submit', SubmitType::class, ['label' => $options['submitLabel']])
         ;
+
+        if($this->authorization->isGranted('ROLE_SUPER_ADMIN')) {
+            $builder->add('destacado', CheckboxType::class, ['label' => 'Destacar en Portada', 'required' => false]);
+        }
+
+        $builder->add('submit', SubmitType::class, ['label' => $options['submitLabel']]);
     }
 
     /// https://stackoverflow.com/questions/10920006/pass-custom-options-to-a-symfony2-form

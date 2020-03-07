@@ -29,7 +29,10 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request, $pagina = 1)
     {
-        $numActivities = $this::$max_activities;
+        /*$numActivities = $this::$max_activities;
+          Nos ceñimos a 3 actividades destacadas en portada */
+        $numActivities = 3;
+
         // Capturamos repositorio de tabla Activity
         $repository = $this->getDoctrine()->getRepository(Activity::class);
 
