@@ -1,55 +1,19 @@
 {# Pagina Administracion #}
-{% extends 'base.html.twig' %}
+{% extends 'administracion/base_admin.html.twig' %}
 
 {# TITULO #}
-{% block title %}Administracion Actividades{% endblock %}
+{% block title %}Administracion{% endblock %}
+
+{# TITULO BODY#}
+{% block bodytitle %}Administración{% endblock %}
 
 {# BODY #}
-{% block body %}
-    <div class="container">
-        <h1 class="mt-4 mb-3">Administracion</h1>
+{% block content %}
 
-        <!-- Content Row -->
-        <div class="row">
-            <!-- Sidebar Column -->
-            <div class="col-lg-3 mb-4">
-                <div class="list-group">
-                    <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
-                    <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
-                    <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
-                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
-                </div>
-            </div>
-            <!-- Content Column -->
-            <div class="col-lg-9 mb-4">
                 <h2>Gestión de contenidos</h2>
                 <p>En este panel podrás gestionar los diferentes contenidos que aparecen en nuestra web. Dependiendo del nivel otorgado, podrás crear categorías de actividades, actividades, asociaciones y validar usuarios. </p>
                 <p>Consulta con el webmaster ante cualquier duda y recuerda que los contenidos agregados o editados serán inmediatamente visibles. ¡Es la imagen pública de La Polifacética! Cuídala como si fuera la de tu propia asociación.</p>
-            </div>
-        </div>
-        <!-- /.row -->
 
-    </div>
-
-{% endblock %}
-
-{# CSS #}
-{% block stylesheets %}
-    {#<style>
-        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
-    </style>#}
-
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
-
-{% endblock %}
-
-{% block javascripts %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/js/bootstrap-datepicker.min.js"></script>
-    <script>
-        jQuery(document).ready(function() {
-            $('.js-datepicker').datepicker();
-        });
-    </script>
 {% endblock %}
 
 

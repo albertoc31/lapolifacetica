@@ -1,53 +1,39 @@
 {# Pagina Nueva Categoria #}
-{% extends 'base.html.twig' %}
+{% extends 'administracion/base_admin.html.twig' %}
 
 {# TITULO #}
 {% block title %}Administracion Lista Actividades{% endblock %}
 
-{# BODY #}
-{% block body %}
-    <div class="container">
-        <h1 class="mt-4 mb-3">Listado de Actividades</h1>
+{# TITULO BODY#}
+{% block bodytitle %}Listado de Actividades{% endblock %}
 
-        <div class="row">
-            <!-- Sidebar Column -->
-            <div class="col-lg-3 mb-4">
-                <div class="list-group">
-                    <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
-                    <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
-                    <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
-                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
+{# CONTENT #}
+{% block content %}
+
+    {% if actividades is defined and actividades is not empty %}
+        <div class="divTable">
+            <div class="divTableHeading">
+                <div class="divTableRow">
+                    <div class="divTableHead width30">Nombre</div>
+                    <div class="divTableHead">Descripción Corta</div>
+                    <div class="divTableHead center">Acción</div>
                 </div>
             </div>
-
-            <div class="col-lg-9 mb-4">
-                {% if actividades is defined and actividades is not empty %}
-                        <div class="divTable">
-                            <div class="divTableHeading">
-                                <div class="divTableRow">
-                                    <div class="divTableHead width30">Nombre</div>
-                                    <div class="divTableHead">Descripción Corta</div>
-                                    <div class="divTableHead center">Acción</div>
-                                </div>
-                            </div>
-                            <div class="divTableBody">
-                    {% for actividad in actividades %}
-                                <div class="divTableRow">
-                                    <div class="divTableCell width30">{{ actividad.activityName }}</div>
-                                    <div class="divTableCell">{{ actividad.shortDescription | raw}}</div>
-                                    <div class="divTableCell center"><button class="btn btn-primary"><a class="" href="{{ path('editActividad', {'id':actividad.id}) }}">Edita</a></button></div>
-                                </div>
-                    {% endfor %}
-                            </div>
+            <div class="divTableBody">
+                {% for actividad in actividades %}
+                    <div class="divTableRow">
+                        <div class="divTableCell width30">{{ actividad.activityName }}</div>
+                        <div class="divTableCell">{{ actividad.shortDescription | raw }}</div>
+                        <div class="divTableCell center">
+                            <button class="btn btn-primary"><a class="" href="{{ path('editActividad', {'id':actividad.id}) }}">Edita</a></button>
                         </div>
-                        <!-- DivTable.com -->
-                {% endif %}
-                <button class="btn btn-primary"><a class="" href="{{ path('nuevaActividad') }}">Nueva Actividad</a></button>
+                    </div>
+                {% endfor %}
             </div>
         </div>
-
-    </div>
-
+        <!-- DivTable.com -->
+    {% endif %}
+    <button class="btn btn-primary"><a class="" href="{{ path('nuevaActividad') }}">Nueva Actividad</a></button>
 {% endblock %}
 
 

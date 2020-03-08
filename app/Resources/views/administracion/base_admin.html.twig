@@ -1,0 +1,38 @@
+{# Pagina Administracion #}
+{% extends 'base.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion{% endblock %}
+
+{# BODY #}
+{% block body %}
+    <div class="container">
+        {# TITULO BODY#}
+        <h1 class="mt-4 mb-3">
+        {% block bodytitle %}Administración{% endblock %}
+        </h1>
+
+        <!-- Content Row -->
+        <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-lg-3 mb-4">
+                <div class="list-group">
+                    <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
+                    <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
+                    <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
+                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
+                </div>
+            </div>
+            <!-- Content Column -->
+            <div class="col-lg-9 mb-4">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        <!-- /.row -->
+
+    </div>
+
+{% endblock %}
+
+
+
