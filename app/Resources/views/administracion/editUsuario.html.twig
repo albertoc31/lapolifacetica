@@ -1,5 +1,5 @@
 {# Pagina Nueva Categoria #}
-{% extends 'base.html.twig' %}
+{% extends 'administracion/base_admin.html.twig' %}
 
 {# Usamos un theme para los formularios #}
 {% form_theme form 'form/base_form.html.twig' %}
@@ -7,37 +7,24 @@
 {# TITULO #}
 {% block title %}Administracion Usuarios{% endblock %}
 
-{# BODY #}
-{% block body %}
-    <div class="container">
-        <h1 class="mt-4 mb-3">{% if isEdit is defined and isEdit != false %}
-                Edita Usuario
-            {% else %}
-                Modificación de datos
-            {% endif %}</h1>
+{# TITULO BODY#}
+{% block bodytitle %}
+    {% if isEdit is defined and isEdit != false %}
+        Edita Usuario
+    {% elseif selfEdit is defined and selfEdit != false %}
+        Modificación de datos
+    {% else %}
+        Nuevo Usuario
+    {% endif %}
+{% endblock %}
 
-        <div class="row">
-            <!-- Sidebar Column -->
-            {% if is_granted('ROLE_ADMIN') %}
-            <div class="col-lg-3 mb-4">
-                <div class="list-group">
-                    <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
-                    <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
-                    <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
-                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
-                </div>
-            {% endif %}
-            </div>
+{# CONTENT #}
+{% block content %}
 
-            <div class="col-lg-9 mb-4">
-            {{ form_start(form) }}
-             {#   esto dibuja los campos #}
-            {{ form_widget(form) }}
-            {{ form_end(form) }}
-            </div>
-        </div>
-
-    </div>
+    {{ form_start(form) }}
+    {#   esto dibuja los campos #}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
 
 {% endblock %}
 

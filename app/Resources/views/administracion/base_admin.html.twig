@@ -15,6 +15,7 @@
         <!-- Content Row -->
         <div class="row">
             <!-- Sidebar Column -->
+            {% if is_granted('ROLE_ADMIN') %}
             <div class="col-lg-3 mb-4">
                 <div class="list-group">
                     <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
@@ -23,6 +24,7 @@
                     <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
                 </div>
             </div>
+            {% endif %}
             <!-- Content Column -->
             <div class="col-lg-9 mb-4">
                 {% block content %}{% endblock %}

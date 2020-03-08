@@ -1,5 +1,5 @@
 {# Pagina Nueva Asociacion / Edit Asociacion #}
-{% extends 'base.html.twig' %}
+{% extends 'administracion/base_admin.html.twig' %}
 
 {# Usamos un theme para los formularios #}
 {% form_theme form 'form/base_form.html.twig' %}
@@ -7,44 +7,23 @@
 {# TITULO #}
 {% block title %}Administracion Asociaciones{% endblock %}
 
-{# BODY #}
-{% block body %}
-    <div class="container">
+{# TITULO BODY#}
+{% block bodytitle %}
+    {% if isEdit is defined and isEdit != false %}
+        Edita Asociación
+    {% else %}
+        Nueva Asociación
+    {% endif %}
+{% endblock %}
 
-        <h1 class="mt-4 mb-3">{% if isEdit is defined and isEdit != false %}
-                Edita Asociación
-            {% else %}
-                Nueva Asociación
-            {% endif %}</h1>
+{# CONTENT #}
+{% block content %}
 
-        <div class="row">
-            <div class="row">
-                <!-- Sidebar Column -->
-                <div class="col-lg-3 mb-4">
-                    <div class="list-group">
-                        <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
-                        <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
-                        <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
-                        <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
-                    </div>
-                </div>
+    {{ form_start(form) }}
 
-                <div class="col-lg-9 mb-4">
-                {{ form_start(form) }}
-
-                {#   esto dibuja los campos #}
-                {{ form_widget(form) }}
-
-               {# {% if oldFoto is defined and oldFoto != false %}
-                    <img class="img-fluid" src="{{ asset(activityImg ~ oldFoto)  | imagine_filter('my_thumb') }}" alt="">
-                {% endif %} #}
-
-                {{ form_end(form) }}
-                </div>
-            </div>
-        </div>
-
-    </div>
+    {#   esto dibuja los campos #}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
 
 {% endblock %}
 
