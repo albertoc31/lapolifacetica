@@ -56,10 +56,6 @@ class UserType extends AbstractType
         } else {
             if ($options['selfEdit']) {
                 $builder
-                    ->add('username', TextType::class, ['label' => 'Nombre de usuario', 'attr' => ['class' => 'form-control'],
-                        'constraints' => array(
-                            new NotBlank(array("message" => "Se requiere un nombre de usuario")),
-                        )])
                     ->add('email', EmailType::class, ['label' => 'Email', 'attr' => ['class' => 'form-control'],
                         'disabled' => true
                     ])
