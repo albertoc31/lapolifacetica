@@ -1,0 +1,45 @@
+{# Pagina Nueva Categoria #}
+{% extends 'administracion/base_admin.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion Lista Colectivos Radio{% endblock %}
+
+{# TITULO BODY#}
+{% block bodytitle %}Listado de Colectivos Radio{% endblock %}
+
+{# CONTENT #}
+{% block content %}
+
+    {% if colectivos is defined and colectivos is not empty %}
+        <div class="divTable">
+            <div class="divTableHeading">
+                <div class="divTableRow">
+                    <div class="divTableHead width30">Nombre Colectivo Radio</div>
+                    <div class="divTableHead">Descripción</div>
+                    <div class="divTableHead">Asociación</div>
+                    <div class="divTableHead center">Acción</div>
+                </div>
+            </div>
+            <div class="divTableBody">
+                {% for colectivo in colectivos %}
+                    <div class="divTableRow">
+                        <div class="divTableCell width30">{{ colectivo.name }}</div>
+                        <div class="divTableCell">{{ colectivo.description | raw }}</div>
+                        <div class="divTableCell">{{ asociations[colectivo.asociacion] }}</div>
+                        <div class="divTableCell center">
+                            <button class="btn btn-primary"><a class="" href="{{ path('editColectivo', {'id':colectivo.id}) }}">Edita</a></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- DivTable.com -->
+    {% endif %}
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <button class="btn btn-primary"><a class="" href="{{ path('nuevoColectivo') }}">Nuevo Colectivo</a></button>
+    {% endif %}
+
+{% endblock %}
+
+
+

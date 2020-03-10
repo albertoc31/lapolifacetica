@@ -10,6 +10,7 @@ use AppBundle\Entity\Activity;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Asociacion;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Colectivo;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\ExpressionLanguage\Expression;
@@ -17,11 +18,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-// Clase de formulario de nueva actividad
+// Clase para el formulario de cada entidad
 use AppBundle\Form\ActivityType;
 use AppBundle\Form\CategoryType;
 use AppBundle\Form\AsociacionType;
 use AppBundle\Form\UserType;
+use AppBundle\Form\ColectivoType;
+
+// librerias de autenticacion y seguridad
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/administracion")
@@ -465,6 +470,77 @@ class AdminController extends Controller {
     }
 
     /**
+     * @Route("/nuevoUsuario/", name="nuevoUsuario")
+     */
+    public function nuevoUsuarioAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_SUPER_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        // Capturamos repositorio de tabla Asociaciones
+        $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+        $asociaciones = $repository_asc->findAll();
+        $asociaciones_array = array_map( function(Asociacion $asociacion){return [$asociacion->getId(),$asociacion->getName()];} , $asociaciones );
+        $choices = [];
+        foreach ($asociaciones_array as $asoc){
+            //print_r($asoc);
+            $choices[$asoc[1]] = $asoc[0];
+        }
+
+        // creates an user and gives it some dummy data for this example
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user, [
+            'choices' => $choices,
+            'submitLabel' => 'Crear Usuario'
+        ]);
+
+        // Recogemos la información
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // $form->getData() holds the submitted values
+            // but, the original `$user` variable has also been updated
+            $user = $form->getData();
+
+            // 3) Encode the password (you could also do this via Doctrine listener)
+            $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($password);
+
+            /*// 3b) $username = $email
+            $user->setUsername($user->getEmail());*/
+
+            // 3c) ROLES
+            $user->setRoles(['ROLE_USER']);
+
+            // 4) save the User!
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // 5 Vamos a almacenar en asociacion su pertenencia a ella
+
+            $asociacion_id = $user->getAsociacion();
+            $asociacion = $repository_asc->findOneById($asociacion_id);
+            $users = $asociacion->getUsers();
+            $users[] = $user->getId();
+            /*var_dump($user); die(' === eso');*/
+            $asociacion->setUsers($users);
+            $entityManager->persist($asociacion);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('listaUsuarios');
+        }
+
+        // replace this example code with whatever you need
+        return $this->render('administracion/editUsuario.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
      * @Route("/editUsuario/{id}", name="editUsuario")
      */
     public function editUsuarioAction(Request $request, $id = null)
@@ -673,6 +749,159 @@ class AdminController extends Controller {
         return $this->render('administracion/listaActividades.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
             'actividades' => $actividades,
+        ]);
+    }
+
+    /**
+     * @Route("/nuevoColectivo/", name="nuevoColectivo")
+     */
+    public function nuevoColectivoAction(Request $request)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_SUPER_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        // creates an activity and gives it some dummy data for this example
+        $colectivo = new Colectivo();
+
+        // Capturamos repositorio de tabla Asociaciones
+        $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+        $asociaciones = $repository_asc->findAll();
+        $asociaciones_array = array_map( function(Asociacion $asociacion){return [$asociacion->getId(),$asociacion->getName()];} , $asociaciones );
+        $choices = [];
+        foreach ($asociaciones_array as $asoc){
+            //print_r($asoc);
+            $choices[$asoc[1]] = $asoc[0];
+        }
+        /*var_dump($choices);die(' ==> bye');*/
+
+        $form = $this->createForm(ColectivoType::class, $colectivo, [
+            'submitLabel' => 'Crear Colectivo',
+            'choices' => $choices,
+        ]);
+
+        // Recogemos la información
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // $form->getData() holds the submitted values
+            // but, the original `$asociacion` variable has also been updated
+            $colectivo = $form->getData();
+
+            // almacenar el colectivo
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($colectivo);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('administracion');
+        }
+
+        // replace this example code with whatever you need
+        return $this->render('administracion/editColectivo.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'form' => $form->createView(),
+            'choices' => $choices
+        ]);
+    }
+
+    /**
+     * @Route("/editColectivo/{id}", name="editColectivo")
+     */
+    public function editColectivoAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_SUPER_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        $goNew = false;
+
+        if ($id != null) {
+
+            $repository = $this->getDoctrine()->getRepository(Colectivo::class);
+            $colectivo = $repository->findOneById($id);
+
+            if ($colectivo != null) {
+
+                // Capturamos repositorio de tabla Asociaciones
+                $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+                $asociaciones = $repository_asc->findAll();
+                $asociaciones_array = array_map( function(Asociacion $asociacion){return [$asociacion->getId(),$asociacion->getName()];} , $asociaciones );
+                $choices = [];
+                foreach ($asociaciones_array as $asoc){
+                    //print_r($asoc);
+                    $choices[$asoc[1]] = $asoc[0];
+                }
+                /*var_dump($choices);die(' ==> bye');*/
+
+                $form = $this->createForm(ColectivoType::class, $colectivo, [
+                    'submitLabel' => 'Editar Colectivo',
+                    'choices' => $choices,
+                ]);
+
+                // Recogemos la información
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    // $form->getData() holds the submitted values
+                    // but, the original `$colectivo` variable has also been updated
+                    $colectivoNew = $form->getData();
+
+                    // almacenar el colectivo
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($colectivoNew);
+                    $entityManager->flush();
+
+                    return $this->redirectToRoute('listaColectivos');
+                }
+
+                return $this->render('administracion/editColectivo.html.twig', [
+                    'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+                    'form' => $form->createView(),
+                    'isEdit' => true,
+                ]);
+            } else {
+                $goNew = true;
+            }
+        } else {
+            $goNew = true;
+        }
+
+        if ($goNew) {
+            // redirects to the "nuevoColectivo" route
+            return $this->redirectToRoute('administracion');
+        }
+
+    }
+
+    /**
+     * @Route("/listaColectivos/", name="listaColectivos")
+     */
+    public function listaColectivosAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_SUPER_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        $repository = $this->getDoctrine()->getRepository(Colectivo::class);
+        $colectivos = $repository->findAll();
+
+        // Capturamos repositorio de tabla Asociaciones
+        $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
+        $asociations = $repository_asc->findAll();
+        $asociaciones = [];
+        foreach ($asociations as $association) {
+            $asociaciones[$association->getID()] = $association->getName();
+        }
+
+        return $this->render('administracion/listaColectivos.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'colectivos' => $colectivos,
+            'asociations' => $asociaciones
         ]);
     }
 

@@ -1,0 +1,30 @@
+{# Pagina Nueva Categoria #}
+{% extends 'administracion/base_admin.html.twig' %}
+
+{# Usamos un theme para los formularios #}
+{% form_theme form 'form/base_form.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion Colectivos Radio{% endblock %}
+
+{# TITULO BODY#}
+{% block bodytitle %}
+    {% if isEdit is defined and isEdit != false %}
+        Edita Colectivo Radio
+    {% else %}
+        Nuevo Colectivo Radio
+    {% endif %}
+{% endblock %}
+
+{# CONTENT #}
+{% block content %}
+
+    {{ form_start(form) }}
+    {#   esto dibuja los campos #}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+
+{% endblock %}
+
+
+
