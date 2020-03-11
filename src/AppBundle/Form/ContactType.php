@@ -19,7 +19,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -30,10 +29,15 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 // usamos CKEditor
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 
+// usamos reCaptcha
+use AppBundle\Form\Type\RecaptchaType;
+
 class ContactType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /*var_dump($options['public_key']); die(' ==> eso');*/
+
         $builder
             ->setAttribute('submitLabel', $options['submitLabel'])
             ->setAttribute('choices', $options['choices'])
@@ -62,6 +66,7 @@ class ContactType extends AbstractType
                     new NotBlank(array("message" => "Por favor, rellena tu mensaje")),
                 )
             ))
+            ->add('recaptcha', RecaptchaType::class)
             ->add('submit', SubmitType::class, ['label' => $options['submitLabel']])
         ;
     }
@@ -71,7 +76,6 @@ class ContactType extends AbstractType
         // For Symfony 2.1 and higher:
         $view->vars['submitLabel'] = $options['submitLabel'];
         $view->vars['choices'] = $options['choices'];
-
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -79,7 +83,7 @@ class ContactType extends AbstractType
         $resolver->setDefaults(array(
             'error_bubbling' => true,
             'submitLabel'=>'Enviar',
-            'choices'=>['ninguna']
+            'choices'=>['ninguna'],
         ));
     }
 }

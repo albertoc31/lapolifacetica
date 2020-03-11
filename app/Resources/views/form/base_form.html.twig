@@ -1,9 +1,11 @@
 
 {%- block form_row -%}
     <div class="control-group form-group osea">{#{{ testOption }}#}
-        {#{{ dump(form.vars.oldFoto) }}#}
+        {#{{ dump(form.vars) }}#}
         <div class="controls">
+            {%  if form.vars.name != 'recaptcha' %}
             {{- form_label(form) -}}
+            {% endif %}
             {{- form_errors(form) -}}
             {{- form_widget(form) -}}
             {#{%  dump form.vars.attr %}#}
@@ -33,3 +35,13 @@
     {%- endif -%}
     <button class="btn btn-primary" type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ translation_domain is same as(false) ? label : label|trans({}, translation_domain) }}</button>
 {%- endblock button_widget -%}
+
+{% block recaptcha_widget %}
+    {#{{ block('recaptcha_entry_label') }}#}
+    {% spaceless %}
+        <div class="g-recaptcha" data-sitekey="{{ form.vars.public_key }}"></div>
+        <script src="https://www.google.com/recaptcha/api.js?render=onload" async defer></script>
+    {% endspaceless %}
+{% endblock %}
+
+{% block recaptcha_entry_label %} <br /> {% endblock %}

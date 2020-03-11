@@ -17,8 +17,11 @@
                 {% if message %}
                     <div class="form-error">{{ message }}</div>
                 {% endif %}
+
+                {%  dump form.vars %}
+
                 {{ form_start(form) }}
-                <div class="g-recaptcha" data-sitekey="6Ld-TeAUAAAAALwJ1FQFWCyVaeus3YP4KbDImAOS"></div>
+                {#<div class="g-recaptcha" data-sitekey="6Ld-TeAUAAAAALwJ1FQFWCyVaeus3YP4KbDImAOS"></div>#}
                 {{ form_widget(form) }}
                 {{ form_end(form) }}
             </div>
