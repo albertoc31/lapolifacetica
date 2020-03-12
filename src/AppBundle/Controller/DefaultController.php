@@ -233,7 +233,8 @@ class DefaultController extends Controller
     }
 
     public function recaptchaAction(Request $request){
-        $recaptcha = new ReCaptcha('6Ld-TeAUAAAAADQFYT4ywLJS1wEhrQW9pkoCZYwg');
+        $recaptcha_private_key = $this->container->getParameter('recaptcha_private_key');
+        $recaptcha = new ReCaptcha($recaptcha_private_key);
         $resp = $recaptcha->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
 
         if (!$resp->isSuccess()) {
