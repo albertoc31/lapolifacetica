@@ -233,13 +233,14 @@ class DefaultController extends Controller
     }
 
     public function recaptchaAction(Request $request){
-        $recaptcha_private_key = $this->container->getParameter('recaptcha_private_key');
+        $recaptcha_private_key = $this->getParameter('recaptcha_private_key');
         $recaptcha = new ReCaptcha($recaptcha_private_key);
         $resp = $recaptcha->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
 
         if (!$resp->isSuccess()) {
+            /*var_dump(implode(', ',$resp->getErrorCodes()) );die();*/
             // Do something if the submit wasn't valid ! Use the message to show something
-            return "No se ha rellenado correctamente. Inténtalo de nuevo." . "(reCAPTCHA said: " . $resp->error . ")";
+            return "No se ha rellenado correctamente. Inténtalo de nuevo. " . "(reCAPTCHA said: " . implode(', ',$resp->getErrorCodes())  . ")";
         }else{
             // Everything works good ;) your contact has been saved.
             return false;
