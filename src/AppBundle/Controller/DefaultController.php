@@ -20,6 +20,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+// libreria para recaptcha
+use ReCaptcha\ReCaptcha;
+
 class DefaultController extends Controller
 {
     private static $max_activities = 6;
@@ -209,12 +212,16 @@ class DefaultController extends Controller
             // Refill the fields in case the form is not valid.
             $form->handleRequest($request);
 
-            if($form->isValid()){
-                // Send mail
-                if($this->sendEmail($form->getData())){
-                    $message = 'Mensaje enviado correctamente';
-                }else{
-                    $message = 'Ha habido un problema al enviar el mail. Por favor, vuelva a intentarlo';
+            $message = $this->recaptchaAction($request);
+
+            if ($message == false) {
+                if ($form->isValid()) {
+                    // Send mail
+                    if ($this->sendEmail($form->getData())) {
+                        $message = 'Mensaje enviado correctamente';
+                    } else {
+                        $message = 'Ha habido un problema al enviar el mail. Por favor, vuelva a intentarlo';
+                    }
                 }
             }
         }
@@ -223,6 +230,19 @@ class DefaultController extends Controller
             'form' => $form->createView(),
             'message'  => $message
         ));
+    }
+
+    public function recaptchaAction(Request $request){
+        $recaptcha = new ReCaptcha('6Ld-TeAUAAAAADQFYT4ywLJS1wEhrQW9pkoCZYwg');
+        $resp = $recaptcha->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
+
+        if (!$resp->isSuccess()) {
+            // Do something if the submit wasn't valid ! Use the message to show something
+            return "No se ha rellenado correctamente. Inténtalo de nuevo." . "(reCAPTCHA said: " . $resp->error . ")";
+        }else{
+            // Everything works good ;) your contact has been saved.
+            return false;
+        }
     }
 
     /**
