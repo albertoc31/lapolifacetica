@@ -258,6 +258,10 @@ class DefaultController extends Controller
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
+        /**
+         * Cuando quiera meter un recaptcha al login for miraré en detalle esto:
+         * https://github.com/syspay/login-recaptcha-bundle/tree/master/src/Bundle
+         */
 
         return $this->render('home/login.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
@@ -291,46 +295,53 @@ class DefaultController extends Controller
             'submitLabel' => 'Registrarse'
         ]);
 
-
+        $message = '';
         // 2) handle the submit (will only happen on POST)
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // 3) Encode the password (you could also do this via Doctrine listener)
-            $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);
+            $message = $this->recaptchaAction($request);
 
-            /*// 3b) $username = $email
-            $user->setUsername($user->getEmail());*/
+            if ($message == false) {
 
-            // 3c) ROLES
-            $user->setRoles(['ROLE_USER']);
+                // 3) Encode the password (you could also do this via Doctrine listener)
+                $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
+                $user->setPassword($password);
 
-            // 4) save the User!
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+                /*// 3b) $username = $email
+                $user->setUsername($user->getEmail());*/
 
-            // 5 Vamos a almacenar en asociacion su pertenencia a ella
+                // 3c) ROLES
+                $user->setRoles(['ROLE_USER']);
 
-            $asociacion_id = $user->getAsociacion();
-            $asociacion = $repository_asc->findOneById($asociacion_id);
-            $users = $asociacion->getUsers();
-            $users[] = $user->getId();
-            /*var_dump($user); die(' === eso');*/
-            $asociacion->setUsers($users);
-            $entityManager->persist($asociacion);
-            $entityManager->flush();
+                // 4) save the User!
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            // ... do any other work - like sending them an email, etc
-            // maybe set a "flash" success message for the user
+                // 5 Vamos a almacenar en asociacion su pertenencia a ella
 
-            return $this->redirectToRoute('acceso');
+                $asociacion_id = $user->getAsociacion();
+                $asociacion = $repository_asc->findOneById($asociacion_id);
+                $users = $asociacion->getUsers();
+                $users[] = $user->getId();
+                /*var_dump($user); die(' === eso');*/
+                $asociacion->setUsers($users);
+                $entityManager->persist($asociacion);
+                $entityManager->flush();
+
+                // ... do any other work - like sending them an email, etc
+                // maybe set a "flash" success message for the user
+
+                return $this->redirectToRoute('acceso');
+            }
         }
 
         return $this->render(
-            'home/register.html.twig',
-            ['form' => $form->createView()]
+            'home/register.html.twig', [
+            'form' => $form->createView(),
+                'message'  => $message
+            ]
         );
     }
 

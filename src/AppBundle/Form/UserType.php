@@ -22,8 +22,9 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-// usamos CKEditor
-use Ivory\CKEditorBundle\Form\Type\CKEditorType;
+// usamos reCaptcha
+use AppBundle\Form\Type\RecaptchaType;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -75,6 +76,10 @@ class UserType extends AbstractType
                     'second_options' => ['label' => 'Repite Password', 'attr' => ['class' => 'form-control']],
                 ])
                 ->add('asociacion', ChoiceType::class, ['label' => 'Asociacion', 'choices' => $options['choices'], 'multiple' => false, 'attr' => ['class' => 'form-control']])
+                /** with mapped avoid to "match" with entity properties **/
+                /** will implement constraint with custom validator: https://symfony.com/doc/3.4/validation/custom_constraint.html
+                 * or with callback: https://symfony.com/doc/3.4/reference/constraints/Callback.html **/
+                ->add('recaptcha', RecaptchaType::class, ['mapped' => false])
             ;
         }
 

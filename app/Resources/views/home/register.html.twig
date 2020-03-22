@@ -16,6 +16,11 @@
         <!-- Portfolio Item Row -->
         <div class="row">
             <div class="col-lg-6">
+
+                {% if message %}
+                    <div class="form-error">{{ message }}</div>
+                {% endif %}
+
                 {{ form_start(form) }}
                 {{ form_widget(form) }}
                 {{ form_end(form) }}
