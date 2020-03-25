@@ -163,3 +163,21 @@ span.inactivo {
 .width30 {
   width: 30%;
 }
+
+/**  sidebar administracion  **/
+.list-group-item {
+  padding: .5rem 1rem;
+}
+.list-group label {
+  position: relative;
+  display: block;
+  padding: .15rem 1rem;
+  margin-bottom: -1px;
+  background-color: #000000;
+  color: #ffffff;
+  font-weight: bold;
+  border: 1px solid rgba(0,0,0,.125);
+}
+.list-group label:not(:first-child) {
+  margin-top: 1.5rem;
+}

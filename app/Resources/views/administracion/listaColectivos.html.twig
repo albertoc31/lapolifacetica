@@ -27,7 +27,9 @@
                         <div class="divTableCell">{{ colectivo.description | raw }}</div>
                         <div class="divTableCell">{{ asociations[colectivo.asociacion] }}</div>
                         <div class="divTableCell center">
+                            {% if colectivo.id in can_edit %}
                             <button class="btn btn-primary"><a class="" href="{{ path('editColectivo', {'id':colectivo.id}) }}">Edita</a></button>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
@@ -35,9 +37,9 @@
         </div>
         <!-- DivTable.com -->
     {% endif %}
-    {% if is_granted('ROLE_SUPER_ADMIN') %}
+    {#% if is_granted('ROLE_SUPER_ADMIN') %#}
         <button class="btn btn-primary"><a class="" href="{{ path('nuevoColectivo') }}">Nuevo Colectivo</a></button>
-    {% endif %}
+    {#% endif %#}
 
 {% endblock %}
 

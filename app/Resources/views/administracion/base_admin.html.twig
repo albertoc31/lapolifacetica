@@ -18,10 +18,13 @@
             {% if is_granted('ROLE_ADMIN') %}
             <div class="col-lg-3 mb-4">
                 <div class="list-group">
+                    <label>L@s Polifacétic@s</label>
+                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
                     <a href="{{ path('listaAsociaciones') }}" class="list-group-item">Asociaciones</a>
                     <a href="{{ path('listaActividades') }}" class="list-group-item">Actividades</a>
                     <a href="{{ path('listaCategorias') }}" class="list-group-item">Categorías</a>
-                    <a href="{{ path('listaUsuarios') }}" class="list-group-item">Usuarios</a>
+
+                    <label>La Radio</label>
                     <a href="{{ path('listaColectivos') }}" class="list-group-item">Colectivos</a>
                 </div>
             </div>

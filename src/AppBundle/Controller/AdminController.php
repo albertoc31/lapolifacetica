@@ -612,7 +612,7 @@ class AdminController extends Controller {
                     $entityManager->persist($asociacion);
                     $entityManager->flush();
 
-                    return $this->redirectToRoute('administracion');
+                    return $this->redirectToRoute('listaUsuarios');
                 }
 
                 return $this->render('administracion/editUsuario.html.twig', [
@@ -759,7 +759,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_SUPER_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
         ));
 
         // creates an activity and gives it some dummy data for this example
@@ -767,12 +767,24 @@ class AdminController extends Controller {
 
         // Capturamos repositorio de tabla Asociaciones
         $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
-        $asociaciones = $repository_asc->findAll();
-        $asociaciones_array = array_map( function(Asociacion $asociacion){return [$asociacion->getId(),$asociacion->getName()];} , $asociaciones );
         $choices = [];
-        foreach ($asociaciones_array as $asoc){
-            //print_r($asoc);
-            $choices[$asoc[1]] = $asoc[0];
+
+        // Solo SUPER_ADMIN puede crear colectivos para otras asociaciones
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $logged_user = $this->getUser();
+            $id_asociacion = $logged_user->getAsociacion();
+            $asociacion = $repository_asc->findOneById($id_asociacion);
+            $choices[$asociacion->getName()] = $asociacion->getId();
+        } else {
+            $asociaciones = $repository_asc->findAll();
+            $asociaciones_array = array_map(function (Asociacion $asociacion) {
+                return [$asociacion->getId(), $asociacion->getName()];
+            }, $asociaciones);
+
+            foreach ($asociaciones_array as $asoc) {
+                //print_r($asoc);
+                $choices[$asoc[1]] = $asoc[0];
+            }
         }
         /*var_dump($choices);die(' ==> bye');*/
 
@@ -795,7 +807,7 @@ class AdminController extends Controller {
             $entityManager->persist($colectivo);
             $entityManager->flush();
 
-            return $this->redirectToRoute('administracion');
+            return $this->redirectToRoute('listaColectivos');
         }
 
         // replace this example code with whatever you need
@@ -813,7 +825,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_SUPER_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
         ));
 
         $goNew = false;
@@ -822,6 +834,16 @@ class AdminController extends Controller {
 
             $repository = $this->getDoctrine()->getRepository(Colectivo::class);
             $colectivo = $repository->findOneById($id);
+
+            // determinaos si tiene permiso para editar este colectivo
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                $logged_user = $this->getUser();
+                $id_asociacion = $logged_user->getAsociacion();
+                if ($colectivo->getAsociacion() !== $id_asociacion){
+                    // nos cargamos el objeto user
+                    $colectivo = null;
+                }
+            }
 
             if ($colectivo != null) {
 
@@ -872,7 +894,7 @@ class AdminController extends Controller {
 
         if ($goNew) {
             // redirects to the "nuevoColectivo" route
-            return $this->redirectToRoute('administracion');
+            return $this->redirectToRoute('listaColectivos');
         }
 
     }
@@ -884,7 +906,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_SUPER_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
         ));
 
         $repository = $this->getDoctrine()->getRepository(Colectivo::class);
@@ -898,10 +920,25 @@ class AdminController extends Controller {
             $asociaciones[$association->getID()] = $association->getName();
         }
 
+        $logged_user = $this->getUser();
+        $id_asociacion = $logged_user->getAsociacion();
+        $can_edit = [];
+
+        foreach ($colectivos as $colectivo) {
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                if ($colectivo->getAsociacion() == $id_asociacion) {
+                    $can_edit[] = $colectivo->getID();
+                }
+            } else {
+                $can_edit[] = $colectivo->getID(); // SUPER_ADMIN puede editar everything
+            }
+        }
+
         return $this->render('administracion/listaColectivos.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
             'colectivos' => $colectivos,
-            'asociations' => $asociaciones
+            'asociations' => $asociaciones,
+            'can_edit' => $can_edit
         ]);
     }
 

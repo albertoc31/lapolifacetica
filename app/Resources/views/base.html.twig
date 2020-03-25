@@ -95,7 +95,11 @@
 <!-- Footer -->
 <footer class="py-5 bg-dark">
     <div class="container">
-        <p class="m-0 text-center text-white">© 2020 La Polifacética</p>
+        <p class="m-0 text-center text-white">© 2020 La Polifacética
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+              - Usuario: {{ app.user.username }}
+        {% endif %}
+        </p>
     </div>
 </footer>
 <!-- END Footer -->
