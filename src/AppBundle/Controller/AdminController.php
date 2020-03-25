@@ -120,7 +120,7 @@ class AdminController extends Controller {
         $this->denyAccessUnlessGranted(new Expression(
             '"ROLE_ADMIN" in roles and user.getActive() == 1'
         ));
-        $goNew = false;
+        $goList = false;
         $repository = $this->getDoctrine()->getRepository(Activity::class);
 
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
@@ -200,16 +200,71 @@ class AdminController extends Controller {
                     'isEdit' => true,
                 ]);
             } else {
-                $goNew = true;
+                $goList = true;
             }
         } else {
-            $goNew = true;
+            $goList = true;
         }
 
-        if ($goNew) {
+        if ($goList) {
             // redirects to the "nuevaActividad" route
-            return $this->redirectToRoute('nuevaActividad');
+            return $this->redirectToRoute('listaActividades');
         }
+    }
+
+    /**
+     * @Route("/listaActividades/", name="listaActividades")
+     */
+    public function listaActividadesAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        $repository = $this->getDoctrine()->getRepository(Activity::class);
+        $actividades = $repository->findAll();
+
+        $can_edit = [];
+
+        $logged_user = $this->getUser();
+        $id_asociacion = $logged_user->getAsociacion();
+
+        foreach ($actividades as $actividad) {
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+
+                // estos son los metodos para trabajar con arrayCollections
+                $exists = $actividad->getAsociaciones()->exists(function($key, $value) use ($id_asociacion) {
+                    //var_dump($value->getID()); die(' ==> eso');
+                    return $value->getID() === $id_asociacion;
+                });
+                if ($exists) {
+                    $can_edit[] = $actividad->getID();
+                }
+                /*foreach ($asoc_array as $asoc) {
+                    if ($id_asociacion == $asoc->getID()) {
+                        $can_edit[] = $actividad->getID();
+                    }
+                }*/
+            } else {
+                $can_edit[] = $actividad->getID(); // SUPER_ADMIN puede editar everything
+            }
+        }
+        //var_dump($can_edit); die(' ==> eso');
+
+        /*if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $logged_user = $this->getUser();
+            $id_asociacion = $logged_user->getAsociacion();
+            $actividades = $repository->getByAssociation($id_asociacion);
+        } else {
+            $actividades = $repository->findAll();
+        }*/
+
+        return $this->render('administracion/listaActividades.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'actividades' => $actividades,
+            'can_edit' => $can_edit
+        ]);
     }
 
 
@@ -719,36 +774,6 @@ class AdminController extends Controller {
         return $this->render('administracion/listaAsociaciones.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
             'asociaciones' => $asociaciones,
-        ]);
-    }
-
-    /**
-     * @Route("/listaActividades/", name="listaActividades")
-     */
-    public function listaActividadesAction(Request $request, $id = null)
-    {
-        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
-        $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_ADMIN" in roles and user.getActive() == 1'
-        ));
-
-        $repository = $this->getDoctrine()->getRepository(Activity::class);
-        $actividades = [];
-
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
-            $logged_user = $this->getUser();
-            $id_asociacion = $logged_user->getAsociacion();
-            $actividades = $repository->getByAssociation($id_asociacion);
-            /*$actividades = $repository->findBy(
-                ['asociaciones' => $id_asociacion]
-            );*/
-        } else {
-            $actividades = $repository->findAll();
-        }
-
-        return $this->render('administracion/listaActividades.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
-            'actividades' => $actividades,
         ]);
     }
 
