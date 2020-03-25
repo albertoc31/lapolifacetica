@@ -62,7 +62,7 @@ body {
 }
 
 .btn-primary {
-  margin-bottom: 10px;
+  vertical-align: top;
 }
 .btn-primary a{
   color: #ffffff;
@@ -114,8 +114,9 @@ body {
   padding: 2px 5px 5px 5px;
 
   color: #555555;
-  font-size: 0.9em;
-  line-height: 1em;
+  font-size: 0.9rem;
+  line-height: 1.2rem;
+  height: 3rem;
 }
 .divTableHead {
   padding: 10px 5px 10px 5px;
