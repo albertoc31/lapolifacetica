@@ -207,8 +207,8 @@ class DefaultController extends Controller
         foreach ($programas as $programa) {
             // var_dump($programa); die();
             setlocale(LC_TIME, "es_ES");
-            $fecha  = strftime("%A %e de %B del %Y", $programa->getFecha()->getTimestamp());
-            // var_dump($fecha); die(' ==> eso');
+            $fecha = strftime("%A %e de %B del %Y", $programa->getFecha()->getTimestamp());
+            $fecha = htmlentities($fecha, ENT_QUOTES, 'UTF-8');
             $programa->setFecha($fecha);
         }
 
