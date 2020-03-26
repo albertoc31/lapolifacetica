@@ -1019,14 +1019,18 @@ class AdminController extends Controller {
             $programa = $form->getData();
 
             $foto = $programa->getFoto();
-            $fileName = $this->generateUniqueFileName().'.'.$foto->guessExtension();
-            try {
-                $foto->move(
-                    $this->getParameter('activity_img'),
-                    $fileName
-                );
-            } catch (FileException $e) {
-                // ... handle exception if something happens during file upload
+            if ($foto != null) {
+                $fileName = $this->generateUniqueFileName() . '.' . $foto->guessExtension();
+                try {
+                    $foto->move(
+                        $this->getParameter('activity_img'),
+                        $fileName
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+            } else {
+                $fileName = '';
             }
             $programa->setFoto($fileName);
 
