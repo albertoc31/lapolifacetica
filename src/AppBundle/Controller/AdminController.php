@@ -760,21 +760,28 @@ class AdminController extends Controller {
         ));
 
         $repository = $this->getDoctrine()->getRepository(Asociacion::class);
-        $asociaciones = [];
+        // $asociaciones = [];
+        $asociaciones = $repository->findAll();
 
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+        $can_edit = [];
+
+        $logged_user = $this->getUser();
+        $id_asociacion = $logged_user->getAsociacion();
+
+        /*if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
             $logged_user = $this->getUser();
             $id_asociacion = $logged_user->getAsociacion();
             $asociaciones[] = $repository->findOneById($id_asociacion);
         } else {
             $asociaciones = $repository->findAll();
-        }
+        }*/
 
         $repository = $this->getDoctrine()->getRepository(Category::class);
         $categorias = $repository->findAll();
         return $this->render('administracion/listaAsociaciones.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
             'asociaciones' => $asociaciones,
+            'id_asociacion' => $id_asociacion
         ]);
     }
 
@@ -1028,6 +1035,12 @@ class AdminController extends Controller {
              * $programa->setFechaIni(new \DateTime());
             */
 
+            // tengo que darle el objeto colectivo
+            $colectivo_id = $programa->getColectivo();
+            $colectivo = $repository_col->findOneById($colectivo_id);
+            // var_dump($colectivo); die (' ==> bye');
+            $programa->setColectivo($colectivo);
+
             // almacenar la actividad
 
             $entityManager = $this->getDoctrine()->getManager();
@@ -1118,7 +1131,13 @@ class AdminController extends Controller {
                 }
                 $programaNew->setFoto($fileName);
 
-                // almacenar la actividad
+                // tengo que darle el objeto colectivo
+                $colectivo_id = $programaNew->getColectivo();
+                $colectivo = $repository_col->findOneById($colectivo_id);
+                // var_dump($colectivo); die (' ==> bye');
+                $programaNew->setColectivo($colectivo);
+
+                // almacenar el programa
 
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($programaNew);
