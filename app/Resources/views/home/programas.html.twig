@@ -1,0 +1,48 @@
+{# Pagina Index #}
+{% extends 'base.html.twig' %}
+
+{# TITULO #}
+{% block title %}Actividades La Polifacética{% endblock %}
+
+{# BODY #}
+{% block body %}
+
+    <!-- Page Content -->
+    <div class="container">
+        <h1 class="my-4">Nuestros Programas <small>en Radio Polifacética</small></h1>
+
+        {% if programas is defined and programas is not empty %}
+        {% for programa in programas %}
+        <!-- Blog Post -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <img class="img-fluid rounded" src="{%- if programa.foto|length > 0 -%}{{ asset(activityImg ~ programa.foto) | imagine_filter('my_med_photo') }}{%- else -%}http://placehold.it/750x300{%- endif -%}" alt="">
+                    </div>
+                    <div class="col-lg-6">
+                        <h2 class="card-title">{{ programa.name | capitalize}}</h2>
+                        <p class="card-text">{{ programa.description | raw }}</p>
+                        <a href="{{ programa.url }}" target="_blank" class="btn btn-primary">Escuchar en nueva pestaña &rarr;</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-muted">{% dump %}
+                Creado el <em>{{ programa.fecha  }}</em> por <em>{{ programa.colectivo.name | capitalize}}</em>
+            </div>
+        </div>
+        <!-- Blog Post END -->
+        {% endfor %}
+        {% endif %}
+
+    </div>
+
+
+{% endblock %}
+
+{# CSS #}
+{% block stylesheets %}
+{#<style>
+    body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+</style>#}
+{% endblock %}

@@ -25,7 +25,9 @@
                         <div class="divTableCell width30">{{ asociacion.name }}</div>
                         <div class="divTableCell">{{ asociacion.shortDescription | raw }}</div>
                         <div class="divTableCell center">
+                            {#{% if asociacion.id in can_edit %}#}
                             <button class="btn btn-primary"><a class="" href="{{ path('editAsociacion', {'id':asociacion.id}) }}">Edita</a></button>
+                            {#{% endif %}#}
                         </div>
                     </div>
                 {% endfor %}

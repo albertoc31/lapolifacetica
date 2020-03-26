@@ -302,7 +302,7 @@ class Activity
      *
      * @return Activity
      */
-    public function addAsociacione(\AppBundle\Entity\Asociacion $asociaciones)
+    public function addAsociaciones(\AppBundle\Entity\Asociacion $asociaciones)
     {
         $this->asociaciones[] = $asociaciones;
 
@@ -314,7 +314,7 @@ class Activity
      *
      * @param \AppBundle\Entity\Asociacion $asociaciones
      */
-    public function removeAsociacione(\AppBundle\Entity\Asociacion $asociaciones)
+    public function removeAsociaciones(\AppBundle\Entity\Asociacion $asociaciones)
     {
         $this->asociaciones->removeElement($asociaciones);
     }

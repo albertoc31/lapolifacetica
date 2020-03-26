@@ -1,0 +1,45 @@
+{# Pagina Nueva Actividad #}
+{% extends 'administracion/base_admin.html.twig' %}
+
+{# Usamos un theme para los formularios #}
+{% form_theme form 'form/base_form.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion Programas{% endblock %}
+
+{# TITULO BODY#}
+{% block bodytitle %}
+    {% if isEdit is defined and isEdit != false %}
+        Edita Programa
+    {% else %}
+        Nuevo Programa
+    {% endif %}
+{% endblock %}
+
+{# CONTENT #}
+{% block content %}
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{# CSS #}
+{% block stylesheets %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        jQuery(document).ready(function () {
+            $('.js-datepicker').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+    </script>
+{% endblock %}
+
+
+

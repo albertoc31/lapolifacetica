@@ -5,7 +5,9 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Activity;
 use AppBundle\Entity\Asociacion;
 use AppBundle\Entity\Category;
+use AppBundle\Entity\Colectivo;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Programa;
 
 // Clase de formulario de nuevo usuario
 use AppBundle\Form\UserType;
@@ -26,6 +28,7 @@ use ReCaptcha\ReCaptcha;
 class DefaultController extends Controller
 {
     private static $max_activities = 6;
+    private static $max_programas = 6;
 
     /**
      * @Route("/", name="homepage")
@@ -180,6 +183,40 @@ class DefaultController extends Controller
         return $this->render('home/home.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'paginaActual' => 1,
+        ]);
+    }
+
+    /**
+     * @Route("/programas/{num}", name="programas")
+     */
+    public function programasAction(Request $request, $num = 1)
+    {
+        // Capturamos repositorio de tabla Activity
+        $repository = $this->getDoctrine()->getRepository(Programa::class);
+
+        // sacamos las programas según la paginacion
+        $programas = $repository->paginaProgramas($num, $this::$max_programas);
+
+        /*$repository_col = $this->getDoctrine()->getRepository(Colectivo::class);
+        $colectivs = $repository_col->findAll();
+        $colectivos = [];
+        $colectivs = array_map( function(Colectivo $colectivo) use (&$colectivos) {
+            $colectivos[$colectivo->getId()] = $colectivo->getName();
+        }, $colectivs);*/
+
+        foreach ($programas as $programa) {
+            // var_dump($programa); die();
+            setlocale(LC_TIME, "es_ES");
+            $fecha  = strftime("%A %e de %B del %Y", $programa->getFecha()->getTimestamp());
+            // var_dump($fecha); die(' ==> eso');
+            $programa->setFecha($fecha);
+        }
+
+        return $this->render('home/programas.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'programas' => $programas,
+            'paginaActual' => $num,
+            /*'colectivos' => $colectivos*/
         ]);
     }
 

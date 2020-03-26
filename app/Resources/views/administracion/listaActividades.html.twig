@@ -25,7 +25,9 @@
                         <div class="divTableCell width30">{{ actividad.activityName }}</div>
                         <div class="divTableCell">{{ actividad.shortDescription | raw }}</div>
                         <div class="divTableCell center">
+                            {% if actividad.id in can_edit %}
                             <button class="btn btn-primary"><a class="" href="{{ path('editActividad', {'id':actividad.id}) }}">Edita</a></button>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}

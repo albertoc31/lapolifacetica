@@ -36,6 +36,13 @@ class Programa
     private $description;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="foto", type="string", length=255)
+     */
+    private $foto;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="fecha", type="datetime")
@@ -50,7 +57,6 @@ class Programa
     private $url;
 
     /**
-     * @ORM\Column(name="colectivo_id", type="integer")
      * @ORM\ManyToOne(targetEntity="Colectivo", inversedBy="programas")
      * @ORM\JoinColumn(name="colectivo_id", referencedColumnName="id")
      */
@@ -116,9 +122,33 @@ class Programa
     }
 
     /**
+     * Set foto
+     *
+     * @param string $foto
+     *
+     * @return Activity
+     */
+    public function setFoto($foto)
+    {
+        $this->foto = $foto;
+
+        return $this;
+    }
+
+    /**
+     * Get foto
+     *
+     * @return string
+     */
+    public function getFoto()
+    {
+        return $this->foto;
+    }
+
+    /**
      * Set fecha
      *
-     * @param \DateTime $fecha
+     * @param \Date $fecha
      *
      * @return Programa
      */
@@ -132,7 +162,7 @@ class Programa
     /**
      * Get fecha
      *
-     * @return \DateTime
+     * @return \Date
      */
     public function getFecha()
     {

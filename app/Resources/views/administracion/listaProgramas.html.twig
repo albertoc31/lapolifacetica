@@ -1,0 +1,44 @@
+{# Pagina Nueva Categoria #}
+{% extends 'administracion/base_admin.html.twig' %}
+
+{# TITULO #}
+{% block title %}Administracion Lista Programas{% endblock %}
+
+{# TITULO BODY#}
+{% block bodytitle %}Listado de Programas{% endblock %}
+
+{# CONTENT #}
+{% block content %}
+
+    {% if programas is defined and programas is not empty %}
+        <div class="divTable">
+            <div class="divTableHeading">
+                <div class="divTableRow">
+                    <div class="divTableHead width30">Nombre</div>
+                    <div class="divTableHead">Fecha</div>
+                    <div class="divTableHead center">URL</div>
+                    <div class="divTableHead center">Acción</div>
+                </div>
+            </div>
+            <div class="divTableBody">
+                {% for programa in programas %}
+                    <div class="divTableRow">
+                        <div class="divTableCell width30">{{ programa.name }}</div>
+                        <div class="divTableCell">{{ programa.fecha|date("d/m/Y") }}</div>
+                        <div class="divTableCell">{{ programa.url }}</div>
+                        <div class="divTableCell center">
+                            {% if programa.id in can_edit %}
+                            <button class="btn btn-primary"><a class="" href="{{ path('editPrograma', {'id':programa.id}) }}">Edita</a></button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- DivTable.com -->
+    {% endif %}
+    <button class="btn btn-primary"><a class="" href="{{ path('nuevoPrograma') }}">Nuevo Programa</a></button>
+{% endblock %}
+
+
+

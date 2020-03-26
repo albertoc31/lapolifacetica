@@ -11,6 +11,7 @@ use AppBundle\Entity\Category;
 use AppBundle\Entity\Asociacion;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Colectivo;
+use AppBundle\Entity\Programa;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\ExpressionLanguage\Expression;
@@ -24,6 +25,7 @@ use AppBundle\Form\CategoryType;
 use AppBundle\Form\AsociacionType;
 use AppBundle\Form\UserType;
 use AppBundle\Form\ColectivoType;
+use AppBundle\Form\ProgramaType;
 
 // librerias de autenticacion y seguridad
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -196,7 +198,6 @@ class AdminController extends Controller {
                 return $this->render('administracion/editActividad.html.twig', [
                     'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
                     'form' => $form->createView(),
-                    'oldFoto' => $oldFoto,
                     'isEdit' => true,
                 ]);
             } else {
@@ -963,6 +964,224 @@ class AdminController extends Controller {
             'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
             'colectivos' => $colectivos,
             'asociations' => $asociaciones,
+            'can_edit' => $can_edit
+        ]);
+    }
+
+    /**
+     * @Route("/nuevoPrograma", name="nuevoPrograma")
+     */
+    public function nuevoProgramaAction(Request $request)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        // creates an activity and gives it some dummy data for this example
+        $programa = new Programa();
+
+        // los colectivos posibles dependen del permiso de usuario
+        $repository_col = $this->getDoctrine()->getRepository(Colectivo::class);
+        $choices = [];
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $logged_user = $this->getUser();
+            $id_asociacion = $logged_user->getAsociacion();
+            $colectivos = $repository_col->findByAsociacion($id_asociacion);
+        } else {
+            $colectivos = $repository_col->findAll();
+        }
+        $colectivos = array_map( function(Colectivo $colectivo) use (&$choices) {
+            $choices[$colectivo->getName()] = $colectivo->getId();
+        }, $colectivos);
+        /*var_dump($choices); die (' ==> bye');*/
+
+        $form = $this->createForm(ProgramaType::class, $programa,
+            ['submitLabel' => 'Guardar Programa',
+                'requireFoto' => false,
+                'oldFoto' => '',
+                'choices' => $choices]);
+
+        // Recogemos la información
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // $form->getData() holds the submitted values
+            // but, the original `$programa` variable has also been updated
+            $programa = $form->getData();
+
+            $foto = $programa->getFoto();
+            $fileName = $this->generateUniqueFileName().'.'.$foto->guessExtension();
+            try {
+                $foto->move(
+                    $this->getParameter('activity_img'),
+                    $fileName
+                );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
+            $programa->setFoto($fileName);
+
+            /*
+             * Para usar una función directa de PHP hay que escapar !!!!!
+             * $programa->setFechaIni(new \DateTime());
+            */
+
+            // almacenar la actividad
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($programa);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('listaProgramas', ['id' => $programa->getId()]);
+        }
+
+        // replace this example code with whatever you need
+        return $this->render('administracion/editPrograma.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/editPrograma/{id}", name="editPrograma")
+     */
+    public function editProgramaAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+        $goList = false;
+        $repository = $this->getDoctrine()->getRepository(Programa::class);
+
+        if ($id != null) {
+            $programa = $repository->findOneById($id);
+
+            $repository_col = $this->getDoctrine()->getRepository(Colectivo::class);
+            $choices = [];
+
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                $logged_user = $this->getUser();
+                $id_asociacion = $logged_user->getAsociacion();
+                $colectivos = $repository_col->findByAsociacion($id_asociacion);
+            } else {
+                $colectivos = $repository_col->findAll();
+            }
+            $colectivos = array_map( function(Colectivo $colectivo) use (&$choices) {
+                $choices[$colectivo->getName()] = $colectivo->getId();
+            }, $colectivos);
+        }
+        /*var_dump($choices); die (' ==> bye');*/
+
+        if ($programa != null) {
+
+            // recojo los valores que pueden no cambiar
+            $oldFoto = $programa->getFoto();
+            $oldColectivo = $programa->getColectivo()->getId();
+            /*var_dump($oldColectivo); die (' ==> bye');*/
+
+            $form = $this->createForm(ProgramaType::class, $programa, [
+                'requireFoto' => false,
+                'submitLabel' => 'Guardar Programa',
+                'oldFoto' => $oldFoto,
+                'choices' => $choices,
+                'colectivo' => $oldColectivo
+
+            ]);
+
+            // Recogemos la información
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                // $form->getData() holds the submitted values
+                // but, the original `$programa` variable has also been updated
+                $programaNew = $form->getData();
+
+                // Guardamos fotos
+                $foto = $programaNew->getFoto();
+
+                if ($foto != null) {
+                    $fileName = $this->generateUniqueFileName() . '.' . $foto->guessExtension();
+                    try {
+                        $foto->move(
+                            $this->getParameter('activity_img'),
+                            $fileName
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+                } else {
+                    // si no ha cmbiado la foto, preservo la antigua
+                    $fileName = $oldFoto;
+                }
+                $programaNew->setFoto($fileName);
+
+                // almacenar la actividad
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($programaNew);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('listaProgramas', ['id' => $programa->getId()]);
+            }
+
+            return $this->render('administracion/editPrograma.html.twig', [
+                'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+                'form' => $form->createView(),
+                'isEdit' => true
+            ]);
+        } else {
+            $goList = true;
+        }
+
+        if ($goList) {
+            // redirects to the "nuevaPrograma" route
+            return $this->redirectToRoute('listaProgramas');
+        }
+    }
+
+    /**
+     * @Route("/listaProgramas/", name="listaProgramas")
+     */
+    public function listaProgramasAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        $repository = $this->getDoctrine()->getRepository(Programa::class);
+        $programas = $repository->findAll();
+
+        $can_edit = [];
+
+        $logged_user = $this->getUser();
+        $id_asociacion = $logged_user->getAsociacion();
+
+        foreach ($programas as $programa) {
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                if ($programa->getColectivo()->getAsociacion() === $id_asociacion ) {
+                    $can_edit[] = $programa->getID();
+                }
+            } else {
+                $can_edit[] = $programa->getID(); // SUPER_ADMIN puede editar everything
+            }
+        }
+        //var_dump($can_edit); die(' ==> eso');
+
+        /*if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $logged_user = $this->getUser();
+            $id_asociacion = $logged_user->getAsociacion();
+            $programas = $repository->getByAssociation($id_asociacion);
+        } else {
+            $programas = $repository->findAll();
+        }*/
+
+        return $this->render('administracion/listaProgramas.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+            'programas' => $programas,
             'can_edit' => $can_edit
         ]);
     }
