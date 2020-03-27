@@ -9,11 +9,15 @@
 
     <!-- Page Content -->
     <div class="container">
+        <a href="#" class="btn btn-primary showcalendar">Ver calendario</a>
         <h1 class="my-4">Nuestras Actividades</h1>
         <p>En este espacio organizamos talleres, encuentros, grupos de trabajo, ámbitos de intercambio vecinal y todo tipo de actividades e iniciativas de socialización y participación que contribuyan al desarrollo de las personas y el mejoramiento de las condiciones de vida en nuestros barrios.</p>
         <!-- Portfolio Section -->
+        <div class="row calendar">
+            <iframe src="https://calendar.google.com/calendar/b/2/embed?height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;ctz=Europe%2FMadrid&amp;src=YWN0aXZpZGFkZXNwb2xpZmFjZXRpY2FAZ21haWwuY29t&amp;color=%23009300&amp;showTitle=0&amp;showNav=1&amp;showPrint=0&amp;showTabs=1&amp;showCalendars=0&amp;showTz=1" style="margin:0 auto;" width="98%" height="500" frameborder="0" scrolling="no"></iframe>
+        </div>
 
-        <div class="row">
+        <div class="row ">
             {% if activities is defined and activities is not empty %}
 
             {% for activity in activities %}
@@ -72,7 +76,32 @@
 
 {# CSS #}
 {% block stylesheets %}
-{#<style>
-    body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
-</style>#}
+<style>
+    .calendar{
+        display: none;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    .showcalendar{
+        float: right;
+        margin-top: 0.4rem;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        jQuery(document).ready(function () {
+            $('.showcalendar').on('click', function(){
+                $('.calendar').slideToggle( "slow", function() {
+                    if ($(this).is(":visible")){
+                        $('.showcalendar').text('Ocultar Calendario');
+                    } else{
+                        $('.showcalendar').text('Ver Calendario');
+                    }
+                });
+            });
+        });
+
+    </script>
 {% endblock %}
