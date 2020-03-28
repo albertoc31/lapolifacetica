@@ -57,9 +57,13 @@ class DefaultController extends Controller
 
         //var_dump($asociaciones);die();
         // replace this example code with whatever you need
+
+        $debug_text = 'ENV = ' . $this->getParameter('kernel.environment') . ' / DEBUG = ' . $this->getParameter('kernel.debug');
+
         return $this->render('home/home.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'activities' => $activities,
+            'debug_text' => $debug_text
             /*'asociaciones' => $asociaciones,*/
 /*            'paginaActual' => $pagina,*/
         ]);
