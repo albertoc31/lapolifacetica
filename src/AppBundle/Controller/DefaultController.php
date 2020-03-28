@@ -55,16 +55,14 @@ class DefaultController extends Controller
         NOS LO HEMOS LLEVADO A UNA EXTENSION DE TWIG
         */
 
-        //var_dump($asociaciones);die();
-        // replace this example code with whatever you need
-
-        $debug_text = 'ENV = ' . $this->getParameter('kernel.environment') . ' / DEBUG = ' . $this->getParameter('kernel.debug');
+        // Esto lo hice porque me volvia loco en produccion mostrando stack traces
+        // $debug_text = 'ENV = ' . $this->getParameter('kernel.environment') . ' / DEBUG = ' . $this->getParameter('kernel.debug');
 
         return $this->render('home/home.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'activities' => $activities,
-            'debug_text' => $debug_text
-            /*'asociaciones' => $asociaciones,*/
+            /*'debug_text' => $debug_text
+            'asociaciones' => $asociaciones,*/
 /*            'paginaActual' => $pagina,*/
         ]);
     }
