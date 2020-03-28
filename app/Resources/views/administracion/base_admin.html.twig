@@ -15,7 +15,7 @@
         <!-- Content Row -->
         <div class="row">
             <!-- Sidebar Column -->
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_ADMIN') and app.user.active == 1 %}
             <div class="col-lg-3 mb-4">
                 <div class="list-group">
                     <label>L@s Polifacétic@s</label>
