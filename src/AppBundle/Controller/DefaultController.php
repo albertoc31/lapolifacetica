@@ -278,7 +278,7 @@ class DefaultController extends Controller
         if (!$resp->isSuccess()) {
             /*var_dump(implode(', ',$resp->getErrorCodes()) );die();*/
             // Do something if the submit wasn't valid ! Use the message to show something
-            return "No se ha rellenado correctamente. Inténtalo de nuevo. " . "(reCAPTCHA said: " . implode(', ',$resp->getErrorCodes())  . ")";
+            return "ReCaptcha no se ha resuelto correctamente. Inténtalo de nuevo."; // "(reCAPTCHA said: " . implode(', ',$resp->getErrorCodes())  . ")";
         }else{
             // Everything works good ;) your contact has been saved.
             return false;
@@ -387,7 +387,7 @@ class DefaultController extends Controller
      * @Route("/editSelf/{id}", name="editSelf")
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
-    public function editSelfAction(Request $request, $id = null)
+    public function editSelfAction(Request $request, $id = null, UserPasswordEncoderInterface $passwordEncoder)
     {
 
         $user = $this->getUser();
@@ -425,37 +425,46 @@ class DefaultController extends Controller
                 // Recogemos la información
                 $form->handleRequest($request);
 
-                /*$userNew = $form->getData();
+                $message = '';
 
-                $data = json_decode($request->getContent(), true);
+                /*$data = json_decode($request->getContent(), true);
                 $method = $request->getMethod();*/
 
                 if ($form->isSubmitted() && $form->isValid()) {
-                    // $form->getData() holds the submitted values
-                    // but, the original `$user` variable has also been updated
-                    $userNew = $form->getData();
 
-                    // almacenar la asociacion
-                    $asociacion_id = $userNew->getAsociacion();
-                    $asociacion = $repository_asc->findOneById($asociacion_id);
-                    $users = $asociacion->getUsers();
-                    $users[] = $userNew->getId();
-                    $asociacion->setUsers($users);
+                    $message = $this->recaptchaAction($request);
+                    if ($message == '') {
+                        // $form->getData() holds the submitted values
+                        // but, the original `$user` variable has also been updated
+                        $userNew = $form->getData();
 
-                    /*var_dump($users); die(' === eso');*/
+                        // 3) Encode the password (you could also do this via Doctrine listener)
+                        $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
+                        $userNew->setPassword($password);
 
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $entityManager->persist($userNew);
-                    $entityManager->persist($asociacion);
-                    $entityManager->flush();
+                        // almacenar la asociacion
+                        $asociacion_id = $userNew->getAsociacion();
+                        $asociacion = $repository_asc->findOneById($asociacion_id);
+                        $users = $asociacion->getUsers();
+                        $users[] = $userNew->getId();
+                        $asociacion->setUsers($users);
 
-                    return $this->redirectToRoute('homepage');
+                        /*var_dump($users); die(' === eso');*/
+
+                        $entityManager = $this->getDoctrine()->getManager();
+                        $entityManager->persist($userNew);
+                        $entityManager->persist($asociacion);
+                        $entityManager->flush();
+
+                        return $this->redirectToRoute('homepage');
+                    }
                 }
 
                 return $this->render('administracion/editUsuario.html.twig', [
                     'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
                     'form' => $form->createView(),
                     'selfEdit' => true,
+                    'message'  => $message
                 ]);
             } else {
                 $goHome = true;

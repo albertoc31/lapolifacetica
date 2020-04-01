@@ -32,6 +32,9 @@
             {% endif %}
             <!-- Content Column -->
             <div class="col-lg-9 mb-4">
+                {% if message is defined and message is not null %}
+                    <div class="form-error">{{ message }}</div>
+                {% endif %}
                 {% block content %}{% endblock %}
             </div>
         </div>
