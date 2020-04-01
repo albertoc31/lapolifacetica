@@ -35,6 +35,8 @@ security:
                 path: /salir
                 target: /
 
+            logout_on_user_change: true
+
     access_control:
         # require ROLE_ADMIN for /admin*
         - { path: ^/administracion, roles: ROLE_ADMIN }
