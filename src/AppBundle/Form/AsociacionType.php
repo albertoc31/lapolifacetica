@@ -10,6 +10,7 @@ namespace AppBundle\Form;
 
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 // Para los objetos de formulario
@@ -29,6 +30,8 @@ use Symfony\Component\Form\FormInterface;
 
 // usamos CKEditor
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AsociacionType extends AbstractType
 {
@@ -46,6 +49,11 @@ class AsociacionType extends AbstractType
             ->add('description', CKEditorType::class, ['label' => 'Descripción'])
             ->add('short_description', TextType::class, ['label' => 'Descripción Breve', 'attr' => ['class' => 'form-control']])
             ->add('foto', FileType::class, ['label' => 'Imagen', 'attr' => ['class' => 'form-control', 'onchange' => 'onChange(event)', 'oldFoto' => $options['oldFoto']], "data_class" => null, 'required' => $options['requireFoto']])
+            ->add('email', EmailType::class, ['label' => 'Email', 'attr' => ['class' => 'form-control'],
+                'constraints' => array(
+                    new NotBlank(array("message" => "Por favor, rellena tu email")),
+                    new Email(array("message" => "El email introducido no parece ser válido")),
+                )])
             ->add('submit', SubmitType::class, ['label' => $options['submitLabel']])
         ;
 
