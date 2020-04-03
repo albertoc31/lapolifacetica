@@ -64,6 +64,14 @@ class Asociacion
      */
     private $activities;
 
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=255)
+     */
+    private $email;
+
     public function __construct()
     {
         $this->activities = new ArrayCollection();
@@ -222,6 +230,30 @@ class Asociacion
     public function getActivities()
     {
         return $this->activities;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return Asociacion
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     /**
