@@ -54,6 +54,7 @@ class AsociacionType extends AbstractType
                     new NotBlank(array("message" => "Por favor, rellena tu email")),
                     new Email(array("message" => "El email introducido no parece ser válido")),
                 )])
+            ->add('web', TextType::class, ['label' => 'Web', 'attr' => ['class' => 'form-control'], 'required' => false])
             ->add('submit', SubmitType::class, ['label' => $options['submitLabel']])
         ;
 

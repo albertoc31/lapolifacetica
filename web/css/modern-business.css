@@ -165,6 +165,12 @@ span.inactivo {
   width: 30%;
 }
 
+/** asociaciones ficha **/
+.col-md-6 .my-3{
+  margin-top: 0rem!important;
+}
+
+
 /**  sidebar administracion  **/
 .list-group-item {
   padding: .5rem 1rem;

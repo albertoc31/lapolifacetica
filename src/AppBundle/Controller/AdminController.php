@@ -493,10 +493,20 @@ class AdminController extends Controller {
                     }
                     $asociacionNew->setFoto($fileName);
 
+                    // guardamos la web sin http://
+
+                    $url = $asociacionNew->getWeb();
+                    /*if (!preg_match('#^http(s)?://#', $url)) {
+                        $url = 'http://' . $url;
+                    }*/
+                    $url = parse_url($url, PHP_URL_HOST) . parse_url($url, PHP_URL_PATH) ;
+                    /*var_dump($url); die (' ==> bye');*/
+                    $asociacionNew->setWeb($url);
+
                     // preservamos los valores que pueden no cambiar
                     $asociacionNew->setUsers($oldUsers);
 
-                    // almacenar la actividad
+                    // almacenar la asociacion
 
                     $entityManager = $this->getDoctrine()->getManager();
                     $entityManager->persist($asociacionNew);
