@@ -13,6 +13,7 @@ use AppBundle\Entity\Programa;
 use AppBundle\Form\UserType;
 use AppBundle\Form\ContactType;
 
+use AppBundle\Service\Mail;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -232,9 +233,10 @@ class DefaultController extends Controller
         $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
         $asociaciones = $repository_asc->findAll();
 
-        $asociaciones_nombres = array_map( function(Asociacion $asociacion){return $asociacion->getName();} , $asociaciones );
-
-        /*var_dump($asociaciones_nombres);die();*/
+        $asoc_array = [];
+        $associations = array_map( function(Asociacion $asociacion) use (&$asoc_array) {
+            $asoc_array[$asociacion->getName()] = $asociacion->getId();
+        }, $asociaciones);
 
         // Create the form according to the FormType created previously.
         // And give the proper parameters
@@ -242,7 +244,7 @@ class DefaultController extends Controller
             // To set the action use $this->generateUrl('route_identifier')
             'action' => $this->generateUrl('contacto'),
             'method' => 'POST',
-            'choices' => array( 'Asociaciones' => array_combine($asociaciones_nombres, $asociaciones_nombres), 'General' => array('La Polifacética'=> 'La Polifacética'))
+            'choices' => array( 'Asociaciones' => $asoc_array, 'General' => array('La Polifacética'=> '0'))
         ));
         $message = '';
 
@@ -254,8 +256,11 @@ class DefaultController extends Controller
 
             if ($message == false) {
                 if ($form->isValid()) {
+
                     // Send mail
-                    if ($this->sendEmail($form->getData())) {
+                    $mail = new Mail($asociaciones);
+
+                    if ($mail->contactMail($form->getData())) {
                         $message = 'Mensaje enviado correctamente';
                     } else {
                         $message = 'Ha habido un problema al enviar el mail. Por favor, vuelva a intentarlo';
@@ -363,7 +368,7 @@ class DefaultController extends Controller
                 $asociacion = $repository_asc->findOneById($asociacion_id);
                 $users = $asociacion->getUsers();
                 $users[] = $user->getId();
-                /*var_dump($user); die(' === eso');*/
+
                 $asociacion->setUsers($users);
                 $entityManager->persist($asociacion);
                 $entityManager->flush();
@@ -371,7 +376,14 @@ class DefaultController extends Controller
                 // ... do any other work - like sending them an email, etc
                 // maybe set a "flash" success message for the user
 
-                return $this->redirectToRoute('acceso');
+                // Send mail
+                $mail = new Mail($asociaciones);
+
+                if ($mail->registryMail($form->getData())) {
+                    return $this->redirectToRoute('acceso');
+                } else {
+                    $message = 'Ha habido un problema al comunicar el registro. Por favor, <a href="/contacto">contacte con nosotros</a>';
+                }
             }
         }
 
@@ -433,6 +445,7 @@ class DefaultController extends Controller
                 if ($form->isSubmitted() && $form->isValid()) {
 
                     $message = $this->recaptchaAction($request);
+
                     if ($message == '') {
                         // $form->getData() holds the submitted values
                         // but, the original `$user` variable has also been updated
@@ -477,31 +490,5 @@ class DefaultController extends Controller
             // redirects to the "homepage" route
             return $this->redirectToRoute('homepage');
         }
-    }
-
-    private function sendEmail($data){
-        $myappContactMail = 'info@convergenciadeculturas.org';
-        $myappContactPassword = 'Toledo50';
-        /*$asociaciones_nombres = $data["asociaciones"]->map( function(Asociacion $asociacion){return $asociacion->getName();} )->getValues();
-        var_dump(implode (', ',  $asociaciones_nombres) );die();*/
-        $asociaciones_nombres = implode(', ',  $data["asociaciones"] );
-
-        // In this case we'll use GMAIL mail services.
-        // If your service is another, then read the following article to know which smpt code to use and which port
-        // http://ourcodeworld.com/articles/read/14/swiftmailer-send-mails-from-php-easily-and-effortlessly
-        $transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465,'ssl')
-            ->setUsername($myappContactMail)
-            ->setPassword($myappContactPassword);
-
-        $mailer = \Swift_Mailer::newInstance($transport);
-
-        $message = \Swift_Message::newInstance("Formulario de contacto de La Polifacética: ". $data["subject"])
-            ->setFrom(array($myappContactMail => "Mensaje de ".$data["name"]))
-            ->setTo(array(
-                $myappContactMail => $myappContactMail
-            ))
-            ->setBody($data["message"]."<br />Email contacto:".$data["email"]."<br />Asociaciones destinatarias: ".$asociaciones_nombres, 'text/html');
-
-        return $mailer->send($message);
     }
 }
