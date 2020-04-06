@@ -379,10 +379,14 @@ class DefaultController extends Controller
                 // Send mail
                 $mail = new Mail($asociaciones);
 
+                // NO PUEDO MANDARLO EN EL CONSTRUCTOR NI INYECTAR DEPENDENCIAS :-(
+                $baseurl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
+                $mail->setBaseurl($baseurl);
+
                 if ($mail->registryMail($form->getData())) {
                     return $this->redirectToRoute('acceso');
                 } else {
-                    $message = 'Ha habido un problema al comunicar el registro. Por favor, <a href="/contacto">contacte con nosotros</a>';
+                    $message = 'Ha habido un problema al comunicar el registro. Por favor, <a href="' . $baseurl . '/contacto">contacte con nosotros</a>';
                 }
             }
         }
