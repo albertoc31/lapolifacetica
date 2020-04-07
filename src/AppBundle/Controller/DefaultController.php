@@ -258,7 +258,9 @@ class DefaultController extends Controller
                 if ($form->isValid()) {
 
                     // Send mail
-                    $mail = new Mail($asociaciones);
+                    $mail_config = $this->getParameter('mail_config');
+                    $mail = new Mail($mail_config);
+                    $mail->setAsociaciones($asociaciones);
 
                     if ($mail->contactMail($form->getData())) {
                         $message = 'Mensaje enviado correctamente';
@@ -377,11 +379,13 @@ class DefaultController extends Controller
                 // maybe set a "flash" success message for the user
 
                 // Send mail
-                $mail = new Mail($asociaciones);
+                $mail_config = $this->getParameter('mail_config');
+                $mail = new Mail($mail_config);
 
                 // NO PUEDO MANDARLO EN EL CONSTRUCTOR NI INYECTAR DEPENDENCIAS :-(
                 $baseurl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
                 $mail->setBaseurl($baseurl);
+                $mail->setAsociaciones($asociaciones);
 
                 if ($mail->registryMail($form->getData())) {
                     return $this->redirectToRoute('acceso');
