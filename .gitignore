@@ -13,13 +13,7 @@ composer.phar
 
 app/config/parameters.yml
 
-web/media/cache/my_big_photo/images/activity_img/
-
-web/media/cache/my_med_photo/images/activity_img/
-
-web/media/cache/my_med_photo/images/
-
-web/media/cache/my_thumb/images/activity_img/
+web/media/cache
 
 web/monedas.php
 
