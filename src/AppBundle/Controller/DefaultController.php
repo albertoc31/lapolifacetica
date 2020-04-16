@@ -200,13 +200,6 @@ class DefaultController extends Controller
         // sacamos las programas según la paginacion
         $programas = $repository->paginaProgramas($num, $this::$max_programas);
 
-        /*$repository_col = $this->getDoctrine()->getRepository(Colectivo::class);
-        $colectivs = $repository_col->findAll();
-        $colectivos = [];
-        $colectivs = array_map( function(Colectivo $colectivo) use (&$colectivos) {
-            $colectivos[$colectivo->getId()] = $colectivo->getName();
-        }, $colectivs);*/
-
         foreach ($programas as $programa) {
             // var_dump($programa); die();
             setlocale(LC_TIME, "es_ES");
@@ -225,7 +218,7 @@ class DefaultController extends Controller
     /**
      * @Route("/contacto/", name="contacto")
      */
-    public function contactoAction(Request $request)
+    public function contactoAction(Request $request, Mail $mail)
     {
         // saco el array de asociaciones
 
@@ -258,8 +251,6 @@ class DefaultController extends Controller
                 if ($form->isValid()) {
 
                     // Send mail
-                    $mail_config = $this->getParameter('mail_config');
-                    $mail = new Mail($mail_config);
                     $mail->setAsociaciones($asociaciones);
 
                     if ($mail->contactMail($form->getData())) {
