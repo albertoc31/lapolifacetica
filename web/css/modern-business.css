@@ -188,3 +188,14 @@ span.inactivo {
 .list-group label:not(:first-child) {
   margin-top: 1.5rem;
 }
+
+/** lightbox **/
+.link-lightbox {
+  position: relative;
+  display: inline-block;
+}
+.open-lightbox {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

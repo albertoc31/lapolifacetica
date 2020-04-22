@@ -135,11 +135,11 @@ liip_imagine:
 
                 # create a thumbnail: set size to 120x90 and use the "outbound" mode
                 # to crop the image when the size ratio of the input differs
-                thumbnail: { size: [698, 498], mode: outbound }
+                thumbnail: { size: [598, 398], mode: outbound }
 
                 # create a 2px black border: center the thumbnail on a black background
                 # 4px larger to create a 2px border around the final image
-                background: { size: [700, 500], position: center, color: '#cccccc' }
+                background: { size: [600, 400], position: center, color: '#cccccc' }
 
         # the name of the "filter set"
         my_med_photo:
@@ -152,8 +152,8 @@ liip_imagine:
 
                 # create a thumbnail: set size to 120x90 and use the "outbound" mode
                 # to crop the image when the size ratio of the input differs
-                thumbnail: { size: [598, 298], mode: outbound }
+                thumbnail: { size: [498, 298], mode: outbound }
 
                 # create a 2px black border: center the thumbnail on a black background
                 # 4px larger to create a 2px border around the final image
-                background: { size: [600, 300], position: center, color: '#cccccc' }
+                background: { size: [500, 300], position: center, color: '#cccccc' }

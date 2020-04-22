@@ -15,11 +15,14 @@
     <!-- Portfolio Item Row -->
     <div class="row">
 
-        <div class="col-md-8">
+        <div class="col-md-6">
+            <a href="{{ asset(activityImg ~ activity.foto) }}" data-toggle="lightbox" class="link-lightbox">
             <img class="img-fluid" src="{{ asset(activityImg ~ activity.foto)  | imagine_filter('my_big_photo') }}" alt="">
+                <img class="open-lightbox" src="{{ asset('img/icon_ampliar.png') }}" alt="">
+            </a>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             <h3 class="my-3">{{ activity.activityName | capitalize}}</h3>
             {{ activity.description | raw }}
             <h3 class="my-3">¿Cuando?</h3>
@@ -77,11 +80,19 @@
 
 {# CSS #}
 {% block stylesheets %}
-    {#<style>
-        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
-    </style>#}
+    <link href="{{ asset('css/ekko-lightbox.css') }}" rel="stylesheet">
 {% endblock %}
 
+{# JS #}
+{% block javascripts %}
+    <script src="{{ asset('js/ekko-lightbox.js') }}" ></script>
+    <script>
+        $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+            event.preventDefault();
+            $(this).ekkoLightbox();
+        });
+    </script>
+{% endblock %}
 
 
 
