@@ -11,7 +11,7 @@
 {% block content %}
 
                 <h2>Gestión de contenidos</h2>
-                <p>En este panel podrás gestionar los diferentes contenidos que aparecen en nuestra web. Dependiendo del nivel otorgado, podrás crear categorías de actividades, actividades, asociaciones y validar usuarios. </p>
+                <p>En este panel podrás gestionar los diferentes contenidos que aparecen en nuestra web. Dependiendo del nivel otorgado, podrás crear {% if is_granted('ROLE_ADMIN') and app.user.active == 1 %}categorías de actividades, actividades, asociaciones y validar usuarios. También {% else %}colectivos y programas para la radio.{% endif %}</p>
                 <p>Consulta con el webmaster ante cualquier duda y recuerda que los contenidos agregados o editados serán inmediatamente visibles. ¡Es la imagen pública de La Polifacética! Cuídala como si fuera la de tu propia asociación.</p>
 
 {% endblock %}

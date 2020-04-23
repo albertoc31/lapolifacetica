@@ -78,7 +78,7 @@
                             <a class="dropdown-item" href="{{ path('acceso') }}">Acceso</a>
                             <a class="dropdown-item" href="{{ path('registro') }}">Registro</a>
                         {% endif %}
-                        {% if is_granted('ROLE_ADMIN') and app.user.active == 1 %}
+                        {% if is_granted('ROLE_ADMIN_COL') and app.user.active == 1 %}
                         <a class="dropdown-item" href="{{ path('administracion') }}">Administracion</a>
                         {% endif %}
                     </div>

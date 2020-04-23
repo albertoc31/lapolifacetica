@@ -44,7 +44,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN_COL" in roles and user.getActive() == 1'
         ));
 
         /*$logged_user = $this->getUser();
@@ -802,7 +802,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN_COL" in roles and user.getActive() == 1'
         ));
 
         // creates an activity and gives it some dummy data for this example
@@ -868,7 +868,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN_COL" in roles and user.getActive() == 1'
         ));
 
         $goNew = false;
@@ -892,7 +892,15 @@ class AdminController extends Controller {
 
                 // Capturamos repositorio de tabla Asociaciones
                 $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
-                $asociaciones = $repository_asc->findAll();
+
+                if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                    // uso findBy en vez de find($id) porque devuelve un array
+                    $asociaciones = $repository_asc->findBy(['id'=>$id_asociacion]);
+                } else {
+                    $asociaciones = $repository_asc->findAll();
+                }
+
+
                 $asociaciones_array = array_map( function(Asociacion $asociacion){return [$asociacion->getId(),$asociacion->getName()];} , $asociaciones );
                 $choices = [];
                 foreach ($asociaciones_array as $asoc){
@@ -949,7 +957,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN_COL" in roles and user.getActive() == 1'
         ));
 
         $repository = $this->getDoctrine()->getRepository(Colectivo::class);
@@ -992,7 +1000,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN_COL" in roles and user.getActive() == 1'
         ));
 
         // creates an activity and gives it some dummy data for this example
@@ -1078,7 +1086,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN_COL" in roles and user.getActive() == 1'
         ));
         $goList = false;
         $repository = $this->getDoctrine()->getRepository(Programa::class);
@@ -1187,7 +1195,7 @@ class AdminController extends Controller {
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
-            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+            '"ROLE_ADMIN_COL" in roles and user.getActive() == 1'
         ));
 
         $repository = $this->getDoctrine()->getRepository(Programa::class);
