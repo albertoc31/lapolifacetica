@@ -1099,6 +1099,11 @@ class AdminController extends Controller {
             $colectivos = array_map( function(Colectivo $colectivo) use (&$choices) {
                 $choices[$colectivo->getName()] = $colectivo->getId();
             }, $colectivos);
+
+            if ($programa->getColectivo()->getAsociacion() !== $id_asociacion ) {
+                $programa = null;
+            }
+
         }
         /*var_dump($choices); die (' ==> bye');*/
 
