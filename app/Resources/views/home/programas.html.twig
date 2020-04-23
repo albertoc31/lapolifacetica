@@ -18,8 +18,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-5">
-                        <img class="img-fluid rounded" src="{%- if programa.foto|length > 0 -%}{{ asset(activityImg ~ programa.foto) | imagine_filter('my_med_photo') }}
-                            {%- else -%}{{ asset('images/radio_generico.jpeg') | imagine_filter('my_med_photo') }}{%- endif -%}" alt="">
+                        <img class="img-fluid rounded" src="{%- if programa.foto|length > 0 -%}{{ asset(activityImg ~ programa.foto) | imagine_filter('my_photo_500x300') }}
+                            {%- else -%}{{ asset('images/radio_generico.jpeg') | imagine_filter('my_photo_500x300') }}{%- endif -%}" alt="">
                     </div>
                     <div class="col-lg-7">
                         <h4 class="card-title">{{ programa.name | capitalize}}</h4>

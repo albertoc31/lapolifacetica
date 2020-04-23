@@ -108,7 +108,7 @@ liip_imagine:
         cache: ~
 
         # the name of the "filter set"
-        my_thumb:
+        my_thumb_360x220:
 
             # adjust the image quality to 75%
             quality: 75
@@ -118,14 +118,14 @@ liip_imagine:
 
                 # create a thumbnail: set size to 120x90 and use the "outbound" mode
                 # to crop the image when the size ratio of the input differs
-                thumbnail: { size: [358, 178], mode: outbound }
+                thumbnail: { size: [358, 218], mode: outbound }
 
                 # create a 2px black border: center the thumbnail on a black background
                 # 4px larger to create a 2px border around the final image
-                background: { size: [360, 180], position: center, color: '#cccccc' }
+                background: { size: [360, 220], position: center, color: '#cccccc' }
 
         # the name of the "filter set"
-        my_big_photo:
+        my_photo_600x400:
 
             # adjust the image quality to 75%
             quality: 75
@@ -142,7 +142,7 @@ liip_imagine:
                 background: { size: [600, 400], position: center, color: '#cccccc' }
 
         # the name of the "filter set"
-        my_med_photo:
+        my_photo_500x300:
 
             # adjust the image quality to 75%
             quality: 75

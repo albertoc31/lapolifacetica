@@ -23,7 +23,7 @@
             {% for activity in activities %}
                 <div class="col-lg-4 col-sm-6 portfolio-item">
                     <div class="card h-100">
-                        <a href="{{ path('actividad', {'id':activity.id}) }}"><img class="card-img-top" src="{%- if activity.foto|length > 0 -%}{{ asset(activityImg ~ activity.foto) }}{%- else -%}http://placehold.it/700x400{%- endif -%}" alt=""></a>
+                        <a href="{{ path('actividad', {'id':activity.id}) }}"><img class="card-img-top" src="{%- if activity.foto|length > 0 -%}{{ asset(activityImg ~ activity.foto)  | imagine_filter('my_thumb_360x220') }}{%- else -%}{{ asset('img/actividad_lapolifacetica.jpg') | imagine_filter('my_thumb_360x220') }}{%- endif -%}" alt=""></a>
                         <div class="card-body">
                             <h4 class="card-title">
                                 <a href="{{ path('actividad', {'id':activity.id}) }}">{{ activity.activityName | capitalize}}</a>

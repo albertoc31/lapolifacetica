@@ -17,7 +17,7 @@
 
         <div class="col-md-6">
             <a href="{{ asset(activityImg ~ activity.foto) }}" data-toggle="lightbox" class="link-lightbox">
-            <img class="img-fluid" src="{{ asset(activityImg ~ activity.foto)  | imagine_filter('my_big_photo') }}" alt="">
+            <img class="img-fluid" src="{{ asset(activityImg ~ activity.foto)  | imagine_filter('my_photo_600x400') }}" alt="">
                 <img class="open-lightbox" src="{{ asset('img/icon_ampliar.png') }}" alt="">
             </a>
         </div>
