@@ -643,12 +643,18 @@ class AdminController extends Controller {
                     //print_r($asoc);
                     $choices[$asoc[1]] = $asoc[0];
                 }
+                $roles = [];
+
+                if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                    $roles = ['ROLE_USER'=>'ROLE_USER', 'ROLE_ADMIN_COL'=>'ROLE_ADMIN_COL', 'ROLE_ADMIN'=>'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'=>'ROLE_SUPER_ADMIN'];
+                }
 
                 $form = $this->createForm(UserType::class, $user, [
                     'submitLabel' => 'Guardar Usuario',
                     'choices' => $choices,
                     'isEdit' => true,
                     'validation_groups' => ['edition'],
+                    'roles' => $roles
                 ]);
 
                 // Recogemos la información

@@ -28,11 +28,23 @@ use AppBundle\Form\Type\RecaptchaType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+// usamos Data Transformer
+use Symfony\Component\Form\CallbackTransformer;
+
 class UserType extends AbstractType
 {
+
+    /* To check user roles, as seen in https://stackoverflow.com/questions/35433295/how-to-customize-form-field-based-on-user-roles-in-symfony2-3 */
+    private $authorization;
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorization = $authorizationChecker;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -40,6 +52,7 @@ class UserType extends AbstractType
             ->setAttribute('submitLabel', $options['submitLabel'])
             ->setAttribute('isEdit', $options['isEdit'])
             ->setAttribute('selfEdit', $options['selfEdit'])
+            ->setAttribute('roles', $options['roles'])
         ;
         $builder
             ->add('username', TextType::class, ['label' => 'Nombre de usuario', 'attr' => ['class' => 'form-control'],
@@ -54,6 +67,34 @@ class UserType extends AbstractType
                     ])
                 ->add('active', CheckboxType::class, ['label' => 'Activo', 'required' => false, 'attr' => ['class' => 'form-control']])
             ;
+
+            // Only SuperAdmin can change user's roles
+            if($this->authorization->isGranted('ROLE_SUPER_ADMIN')) {
+
+                $builder->add('roles', ChoiceType::class, [
+                    'label' => 'Rol',
+                    'choices' => $options['roles'],
+                    'multiple' => false,
+                    'expanded' => false,
+                    'attr' => ['class' => 'form-control']
+                ]);
+
+                /** roles field data transformer (is a Model Transformer as seen here:
+                 * https://symfony.com/doc/3.4/form/data_transformers.html */
+
+                $builder->get('roles')
+                    ->addModelTransformer(new CallbackTransformer(
+                        function ($rolesArray) {
+                            // transform the array to a string
+                            return count($rolesArray) ? $rolesArray[0] : null;
+                        },
+                        function ($rolesString) {
+                            // transform the string back to an array
+                            return [$rolesString];
+                        }
+                    ));
+            }
+
         } else {
             if ($options['selfEdit']) {
                 $builder
@@ -94,6 +135,7 @@ class UserType extends AbstractType
         $view->vars['submitLabel'] = $options['submitLabel'];
         $view->vars['isEdit'] = $options['isEdit'];
         $view->vars['selfEdit'] = $options['selfEdit'];
+        $view->vars['roles'] = $options['roles'];
 
     }
     public function configureOptions(OptionsResolver $resolver)
@@ -103,7 +145,8 @@ class UserType extends AbstractType
             'submitLabel'=>'Registrarse',
             'choices'=>['ninguna'],
             'isEdit'=>false,
-            'selfEdit'=>false
+            'selfEdit'=>false,
+            'roles'=>[]
         ));
     }
 }
