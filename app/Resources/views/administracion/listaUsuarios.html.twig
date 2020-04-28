@@ -31,6 +31,9 @@
                                     class="inactivo"></span>{% endif %}</div>
                         <div class="divTableCell center">
                             <button class="btn btn-primary"><a class="" href="{{ path('editUsuario', {'id':usuario.id}) }}">Edita</a></button>
+                            {#{% if is_granted('ROLE_SUPER_ADMIN') %}#}
+                                <a href="#" onclick="return confirmaBorrar('{{ path('borraUsuario', {'id':usuario.id}) }}', '{{ usuario.username }}')" class="borrar"><i class="far fa-trash-alt"></i></a>
+                            {#{% endif %}#}
                         </div>
                     </div>
                 {% endfor %}
@@ -44,5 +47,16 @@
 
 {% endblock %}
 
+{# CSS #}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+{% endblock %}
 
+{# JS #}
+{% block javascripts %}
+
+    {# Aquí usaremos para las alertas la libreria sweetalert.js.org #}
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ asset('js/sweetAlerts.js') }}" ></script>
+{% endblock %}
 

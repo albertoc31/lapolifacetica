@@ -53,9 +53,13 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(name="is_active", type="boolean")
-     * @Assert\NotIdenticalTo("Mary")(groups={"edition"})
      */
     private $isActive;
+
+    /**
+     * @ORM\Column(name="deleted", type="boolean")
+     */
+    private $deleted;
 
 
     /**
@@ -166,6 +170,16 @@ class User implements UserInterface, \Serializable
     public function setActive($isActive)
     {
         return $this->isActive = $isActive;
+    }
+
+    public function getDeleted()
+    {
+        return boolval($this->deleted);
+    }
+
+    public function setDeleted($deleted)
+    {
+        return $this->deleted = $deleted;
     }
 
     /** @see \Serializable::serialize() */

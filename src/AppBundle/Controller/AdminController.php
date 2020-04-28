@@ -706,6 +706,43 @@ class AdminController extends Controller {
     }
 
     /**
+     * @Route("/borraUsuario/{id}", name="borraUsuario")
+     */
+    public function borraUsuarioAction(Request $request, $id = null)
+    {
+        /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
+        $this->denyAccessUnlessGranted(new Expression(
+            '"ROLE_ADMIN" in roles and user.getActive() == 1'
+        ));
+
+        if ($id != null) {
+
+            $repository = $this->getDoctrine()->getRepository(User::class);
+            $user = $repository->findOneById($id);
+
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+                $logged_user = $this->getUser();
+                $id_asociacion = $logged_user->getAsociacion();
+                if ($user->getAsociacion() !== $id_asociacion) {
+                    // nos cargamos el objeto user
+                    $user = null;
+                }
+            }
+
+            if ($user != null) {
+                $repository = $this->getDoctrine()->getRepository(User::class);
+                $user = $repository->findOneById($id);
+                $user->setDeleted(true);
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }
+        }
+        return $this->redirectToRoute('listaUsuarios');
+    }
+
+                /**
      * @Route("/listaUsuarios/", name="listaUsuarios")
      */
     public function listaUsuariosAction(Request $request, $id = null)
@@ -727,10 +764,11 @@ class AdminController extends Controller {
 
             // get usuarios for this association
             $usuarios = $repository->findBy(
-                ['asociacion' => $id_asociacion]
+                ['asociacion' => $id_asociacion,
+                    'deleted' => false]
             );
         } else {
-            $usuarios = $repository->findAll();
+            $usuarios = $repository->findBy(['deleted' => false]);
 
             $asociations = $repository_asc->findAll();
             $asociaciones = [];

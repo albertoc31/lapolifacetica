@@ -111,7 +111,7 @@ body {
 .divTableCell, .divTableHead {
   border: 1px solid #dedede;
   display: table-cell;
-  padding: 2px 5px 5px 5px;
+  padding: 5px 5px 5px 5px;
 
   color: #555555;
   font-size: 0.9rem;
@@ -143,7 +143,7 @@ span.activo {
   height: 20px;
   border-radius: 10px;
   display: inline-block;
-  margin-bottom: -5px;
+  margin-bottom: -0.6rem;
   background-color: lawngreen;
 }
 span.inactivo {
@@ -151,7 +151,7 @@ span.inactivo {
   height: 20px;
   border-radius: 10px;
   display: inline-block;
-  margin-bottom: -5px;
+  margin-bottom: -0.6rem;
   background-color: red;
 }
 
@@ -198,4 +198,15 @@ span.inactivo {
   position: absolute;
   top: 0;
   right: 0;
+}
+
+/** borrar registros y otras acciones **/
+.borrar {
+  display: inline-block;
+  margin-top: 0.4rem;
+  float: right;
+}
+.borrar .far{
+  font-size: 1.2rem;
+  line-height: 1rem;
 }
