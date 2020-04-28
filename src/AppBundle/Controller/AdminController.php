@@ -732,11 +732,16 @@ class AdminController extends Controller {
             if ($user != null) {
                 $repository = $this->getDoctrine()->getRepository(User::class);
                 $user = $repository->findOneById($id);
-                $user->setDeleted(true);
 
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($user);
-                $entityManager->flush();
+                $roles = $user->getRoles();
+                if (!in_array('ROLE_SUPER_ADMIN', $roles) ) {
+
+                    $user->setDeleted(true);
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                }
             }
         }
         return $this->redirectToRoute('listaUsuarios');

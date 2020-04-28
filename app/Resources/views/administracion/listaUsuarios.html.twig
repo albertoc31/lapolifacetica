@@ -32,8 +32,9 @@
                         <div class="divTableCell center">
                             <button class="btn btn-primary"><a class="" href="{{ path('editUsuario', {'id':usuario.id}) }}">Edita</a></button>
                             {#{% if is_granted('ROLE_SUPER_ADMIN') %}#}
+                            {% if 'ROLE_SUPER_ADMIN' not in usuario.roles %}
                                 <a href="#" onclick="return confirmaBorrar('{{ path('borraUsuario', {'id':usuario.id}) }}', '{{ usuario.username }}')" class="borrar"><i class="far fa-trash-alt"></i></a>
-                            {#{% endif %}#}
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
