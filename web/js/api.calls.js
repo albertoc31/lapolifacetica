@@ -23,9 +23,9 @@ function insertCat(cat){
             dataType: "JSON",
             headers: {'X-AUTH-TOKEN': api_key}
         }).done(function (data) {
-            // Done
+            changeCatSelect(data);
         }).fail(function (data) {
-            // Failed
+            failCatAdd(cat);
         });
     } else {
         // mostramos alerta
