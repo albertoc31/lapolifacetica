@@ -35,7 +35,6 @@
                     <div class="control-group form-group">
                         {{ form_widget(form.submit) }}
                     </div> #}
-
     {{ form_end(form) }}
 
 {% endblock %}
@@ -51,6 +50,11 @@
 {% endblock %}
 
 {% block javascripts %}
+    {# Aquí usaremos para las alertas la libreria sweetalert.js.org #}
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ asset('js/sweetAlerts.js') }}" ></script>
+    <script src="{{ asset('js/api.calls.js') }}" ></script>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/js/bootstrap-datepicker.min.js"></script>
     <script>
         jQuery(document).ready(function () {

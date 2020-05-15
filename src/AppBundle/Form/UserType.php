@@ -77,10 +77,14 @@ class UserType extends AbstractType
                     'multiple' => false,
                     'expanded' => false,
                     'attr' => ['class' => 'form-control']
-                ]);
+                ])
+                    ->add('build_apikey', CheckboxType::class, ['label' => 'Generar Api Key', 'required' => false, 'attr' => ['class' => 'form-control'], 'mapped' => false])
+                ;
 
                 /** roles field data transformer (is a Model Transformer as seen here:
-                 * https://symfony.com/doc/3.4/form/data_transformers.html */
+                 * https://symfony.com/doc/3.4/form/data_transformers.html
+                 * Needed since 'multiple' = false
+                 */
 
                 $builder->get('roles')
                     ->addModelTransformer(new CallbackTransformer(

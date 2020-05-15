@@ -13,6 +13,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Colectivo;
 use AppBundle\Entity\Programa;
 
+use AppBundle\Service\Mail;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +68,7 @@ class AdminController extends Controller {
             '"ROLE_ADMIN" in roles and user.getActive() == 1'
         ));
 
-        // creates an activity and gives it some dummy data for this example
+        // creates an activity. In ActivityType we use EntityType for Asociaciones
         $activity = new Activity();
         $form = $this->createForm(ActivityType::class, $activity,
             ['submitLabel' => 'Guardar Actividad']);
@@ -150,12 +151,13 @@ class AdminController extends Controller {
                 // recojo los valores que pueden no cambiar
                 $oldFoto = $activity->getFoto();
 
-
+                $apiKey = $this->getUser()->getApikey();
 
                 $form = $this->createForm(ActivityType::class, $activity, [
                     'requireFoto' => false,
                     'submitLabel' => 'Guardar Actividad',
                     'oldFoto' => $oldFoto,
+                    'apiKey' => $apiKey
 
                 ]);
 
@@ -198,7 +200,7 @@ class AdminController extends Controller {
                 return $this->render('administracion/editActividad.html.twig', [
                     'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
                     'form' => $form->createView(),
-                    'isEdit' => true,
+                    'isEdit' => true
                 ]);
             } else {
                 $goList = true;
@@ -279,7 +281,7 @@ class AdminController extends Controller {
             '"ROLE_ADMIN" in roles and user.getActive() == 1'
         ));
 
-        // creates an activity and gives it some dummy data for this example
+        // creates a category and gives it some dummy data for this example
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category, ['allow_file_upload'=>false]);
 
@@ -302,7 +304,7 @@ class AdminController extends Controller {
             $entityManager->persist($category);
             $entityManager->flush();
 
-            return $this->redirectToRoute('category', ['id' => $category->getId()]);
+            return $this->redirectToRoute('listaCategorias');
         }
 
         // replace this example code with whatever you need
@@ -348,7 +350,7 @@ class AdminController extends Controller {
                     $entityManager->persist($categoryNew);
                     $entityManager->flush();
 
-                    return $this->redirectToRoute('category', ['id' => $category->getId()]);
+                    return $this->redirectToRoute('listaCategorias');
                 }
 
                 return $this->render('administracion/editCategoria.html.twig', [
@@ -634,6 +636,8 @@ class AdminController extends Controller {
 
             if ($user != null) {
 
+                $message = '';
+
                 // Capturamos repositorio de tabla Asociaciones
                 $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
                 $asociaciones = $repository_asc->findAll();
@@ -646,7 +650,7 @@ class AdminController extends Controller {
                 $roles = [];
 
                 if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
-                    $roles = ['ROLE_USER'=>'ROLE_USER', 'ROLE_ADMIN_COL'=>'ROLE_ADMIN_COL', 'ROLE_ADMIN'=>'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'=>'ROLE_SUPER_ADMIN'];
+                    $roles = ['ROLE_USER'=>'ROLE_USER', 'ROLE_ADMIN_COL'=>'ROLE_ADMIN_COL', 'ROLE_ADMIN'=>'ROLE_ADMIN', 'ROLE_API'=>'ROLE_API',  'ROLE_SUPER_ADMIN'=>'ROLE_SUPER_ADMIN'];
                 }
 
                 $form = $this->createForm(UserType::class, $user, [
@@ -660,18 +664,23 @@ class AdminController extends Controller {
                 // Recogemos la información
                 $form->handleRequest($request);
 
-                /*$userNew = $form->getData();
+                $userNew = $form->getData();
 
                 $data = json_decode($request->getContent(), true);
-                $method = $request->getMethod();*/
-
-                /*var_dump($request->getContent()); die(' === eso');*/
+                $method = $request->getMethod();
+                $args = $request->request->all();
+                $build_apikey = isset($args['user']['build_apikey']) ? $args['user']['build_apikey'] : false;
 
                 if ($form->isSubmitted() && $form->isValid()) {
                     // $form->getData() holds the submitted values
                     // but, the original `$user` variable has also been updated
                     $userNew = $form->getData();
 
+                    // Aqui (re)generamos la ApiKey
+                    if ($build_apikey) {
+                        $newApiKey = password_hash(bin2hex(random_bytes(64)), PASSWORD_BCRYPT);
+                        $userNew->setApikey($newApiKey);
+                    }
                     // almacenar la asociacion
                     $asociacion_id = $userNew->getAsociacion();
                     $asociacion = $repository_asc->findOneById($asociacion_id);
@@ -684,13 +693,24 @@ class AdminController extends Controller {
                     $entityManager->persist($asociacion);
                     $entityManager->flush();
 
-                    return $this->redirectToRoute('listaUsuarios');
+                    if ($newApiKey) {
+                        // comunicamos al usuario su Apikey
+                        $mail = new Mail($this->getParameter('mail_config'));
+                        if ($mail->apiMail($userNew)) {
+                            return $this->redirectToRoute('listaUsuarios');
+                        } else {
+                            $message = 'Ha habido un problema al comunicar la ApiKey';
+                        }
+                    } else {
+                        return $this->redirectToRoute('listaUsuarios');
+                    }
                 }
 
                 return $this->render('administracion/editUsuario.html.twig', [
                     'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
                     'form' => $form->createView(),
                     'isEdit' => true,
+                    'message'  => $message
                 ]);
             } else {
                 $goAdmin = true;
@@ -747,10 +767,10 @@ class AdminController extends Controller {
         return $this->redirectToRoute('listaUsuarios');
     }
 
-                /**
+    /**
      * @Route("/listaUsuarios/", name="listaUsuarios")
      */
-    public function listaUsuariosAction(Request $request, $id = null)
+    public function listaUsuariosAction(Request $request)
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(

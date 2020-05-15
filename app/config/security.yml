@@ -12,6 +12,11 @@ security:
                 # manager_name: customer
 #        in_memory:
 #            memory: ~
+        api_provider:
+            id: AppBundle\Security\ApiKeyUserProvider
+#            entity:
+#                class: AppBundle:User
+#                property: apikey
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -19,6 +24,15 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
             provider: our_db_provider
+
+        api:
+            pattern: ^/api
+            provider: api_provider
+            logout_on_user_change: true
+            # https://symfony.com/doc/3.4/security/guard_authentication.html
+            guard:
+                authenticators:
+                    - AppBundle\Security\UserAuthenticator
 
         main:
             anonymous: ~
@@ -37,18 +51,29 @@ security:
 
             logout_on_user_change: true
 
+            provider: our_db_provider
+
+            # https://symfony.com/doc/3.4/security/guard_authentication.html
+#            guard:
+#                authenticators:
+#                    - AppBundle\Security\UserAuthenticator
+
+
     access_control:
         # require ROLE_ADMIN for /admin*
         - { path: ^/administracion, roles: ROLE_ADMIN_COL }
         # { path: ^/administracion, allow_if: "'user.getActive() == 1'" }
+        - { path: '^/api', roles: ROLE_API }
 
     access_decision_manager:
         strategy: unanimous
         allow_if_all_abstain: false
+        # esta regla de tener en cuenta todos los voters no está funcionando, por eso hemos metido el constraint en el controller
 
     role_hierarchy:
+        ROLE_API: ROLE_USER
         ROLE_ADMIN_COL: ROLE_USER
-        ROLE_ADMIN: ROLE_ADMIN_COL
+        ROLE_ADMIN: [ROLE_ADMIN_COL, ROLE_API]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     encoders:

@@ -4,6 +4,7 @@
 namespace AppBundle\Controller;
 
 
+use http\Message;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -11,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Activity;
@@ -22,13 +24,27 @@ use AppBundle\Entity\Activity;
 class ApiController extends Controller
 {
     /**
-     * @Route("/listaCategorias", methods={"GET"})
+     * @Route("/", name="_doc")
+     */
+    public function docAction()
+    {
+        // Esto es una siple lista de metodos de la API para montar con el tiempo una documentación
+
+        $array1 = get_class_methods($this);
+        if($parent_class = get_parent_class($this)){
+            $array2 = get_class_methods($parent_class);
+            $array3 = array_diff($array1, $array2);
+        }else{
+            $array3 = $array1;
+        }
+        $array3 = array_diff($array3,[__FUNCTION__]);
+        return new JsonResponse($array3);
+    }
+    /**
+     * @Route("/listaCategorias", name="_lista_categoria", methods={"GET"})
      */
     public function listaCategoriasAction()
     {
-        // ... return a JSON response with the post
-
-
         $repository = $this->getDoctrine()->getRepository(Category::class);
         $categorias = $repository->findAll();
 
@@ -45,16 +61,35 @@ class ApiController extends Controller
         // var_dump($encoding); die(' ==>bye');
         return $response;
 
-        return new Response("<html><head></head><body>Lista Categorías</body></head></html>");
+//        return new Response("<html><head></head><body>Lista Categorías</body></head></html>");
 
     }
 
     /**
-     * @Route("/insertaCategoria/{categoria}", methods={"POST"})
+     * @Route("/insertaCategoria/{name}/{description}", name="_inserta_categoria", methods={"POST"})
      */
-    public function insertaCategoriaAction($categoria)
+    public function insertaCategoriaAction($name = '', $description = '')
     {
-        // ... edit a post
-        return new Response("<html><head></head><body>Inserta Categoría: " . $categoria . "</body></head></html>");
+        if ( strlen($name) > 0 ) {
+            $category = new Category();
+            $category->setName($name);
+            $category->setDescription($description);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($category);
+            $entityManager->flush();
+
+            $categoria_array = [
+                "id" => $category->getId(),
+                "name" => $category->getName(),
+                "description" => $category->getDescription()
+                ];
+
+            return new JsonResponse($categoria_array);
+        }
+
+        throw new BadRequestHttpException ('Falta Nombre', null, 400);
+//        $category = new Category();
+
     }
 }

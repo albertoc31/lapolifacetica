@@ -371,6 +371,7 @@ class DefaultController extends Controller
 
                 // Send mail
                 $mail_config = $this->getParameter('mail_config');
+                // Le pasamos mail_config porque no lo hemos inyectado invocando Mail como servicio
                 $mail = new Mail($mail_config);
 
                 // NO PUEDO MANDARLO EN EL CONSTRUCTOR NI INYECTAR DEPENDENCIAS :-(

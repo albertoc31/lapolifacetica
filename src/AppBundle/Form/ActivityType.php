@@ -45,6 +45,7 @@ class ActivityType extends AbstractType
             ->setAttribute('submitLabel', $options['submitLabel'])
             ->setAttribute('requireFoto', $options['requireFoto'])
             ->setAttribute('oldFoto', $options['oldFoto'])
+            ->setAttribute('apiKey', $options['apiKey'])
         ;
 
         $builder
@@ -74,6 +75,7 @@ class ActivityType extends AbstractType
         $view->vars['submitLabel'] = $options['submitLabel'];
         $view->vars['requireFoto'] = $options['requireFoto'];
         $view->vars['oldFoto'] = $options['oldFoto'];
+        $view->vars['apiKey'] = $options['apiKey'];
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -83,6 +85,7 @@ class ActivityType extends AbstractType
             'submitLabel'=>'Crear Actividad',
             'requireFoto'=>true,
             'oldFoto'=>'',
+            'apiKey'=>''
         ));
     }
 

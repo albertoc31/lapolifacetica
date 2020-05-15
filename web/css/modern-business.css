@@ -210,3 +210,10 @@ span.inactivo {
   font-size: 1.2rem;
   line-height: 1rem;
 }
+
+/** crear categoria desde formulario activity **/
+
+input.nuevaCat {
+  margin-right: -2.6rem;
+  display:inline-block
+}
