@@ -20,6 +20,27 @@
     <textarea class="form-control" {{ block('widget_attributes') }}>{{ value }}</textarea>
 {%- endblock textarea_widget -%}
 
+
+{# Modificamos el selector de categoria de la actividad para poder crearla "al vuelo" #}
+{%- block _activity_category_widget -%}
+    <div class="row">
+        <div class="col-lg-6">
+                {{- form_widget(form) -}}
+        </div>
+        <div class="col-lg-6">
+            <input type="text" id="nuevaCat" name="" value="" class="form-control nuevaCat" placeholder="Crear Categoría">
+            <input type="hidden" id="api_url" value="{{ url('api_inserta_categoria') }}">
+            {#{%  dump form.parent.vars.apiKey %}#}
+            {% if form.parent.vars.apiKey is defined and form.parent.vars.apiKey != false %}
+                <input type="hidden" id="api_key" value="{{ form.parent.vars.apiKey }}">
+            {% endif %}
+            <button type="button" name="button" class="btn btn-primary" onclick="confirmaCatAdd()">+</button>
+        </div>
+    </div>
+{%- endblock _activity_category_widget -%}
+
+
+
 {%- block button_widget -%}
     {%- if label is empty -%}
         {%- if label_format is not empty -%}
