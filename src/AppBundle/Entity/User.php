@@ -52,6 +52,11 @@ class User implements UserInterface, \Serializable
     private $roles;
 
     /**
+     * @ORM\Column(type="string", length=254)
+     */
+    private $apikey;
+
+    /**
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
@@ -142,6 +147,16 @@ class User implements UserInterface, \Serializable
     public function getRoles()
     {
         return json_decode($this->roles);
+    }
+
+    public function getApikey()
+    {
+        return $this->apikey;
+    }
+
+    public function setApikey($apikey)
+    {
+        return $this->apikey = $apikey;
     }
 
     public function eraseCredentials()

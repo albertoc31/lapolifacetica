@@ -10,4 +10,18 @@ namespace AppBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function loadUserByApiKey($apiKey)
+    {
+        // avoid remote timing attack
+        // https://blog.ircmaxell.com/2014/11/its-all-about-time.html
+        $sub_apiKey = substr($apiKey,0,32);
+
+        return $this->createQueryBuilder('u')
+            ->where('u.apikey LIKE :apikey')
+            ->setParameter('apikey', $sub_apiKey . '%')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
 }
