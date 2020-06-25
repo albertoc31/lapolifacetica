@@ -85,6 +85,11 @@ body {
 .form-control {
   margin-bottom: 10px;
 }
+
+input[type='checkbox'].form-control {
+  height: 1rem;
+  width: auto;
+}
 .form-group label {
   margin-right: 10px;
 }
