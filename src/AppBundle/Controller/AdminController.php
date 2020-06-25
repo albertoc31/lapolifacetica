@@ -13,7 +13,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Colectivo;
 use AppBundle\Entity\Programa;
 
-use AppBundle\Service\Mail;
+use AppBundle\Service\SendMailApiKey;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
@@ -582,6 +582,13 @@ class AdminController extends Controller {
             // 3c) ROLES
             $user->setRoles(['ROLE_USER']);
 
+
+            // 4) Deleted
+            $user->setDeleted(0);
+
+            // 5) ApiKey
+            $user->setApikey('');
+
             // 4) save the User!
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
@@ -611,7 +618,7 @@ class AdminController extends Controller {
     /**
      * @Route("/editUsuario/{id}", name="editUsuario")
      */
-    public function editUsuarioAction(Request $request, $id = null)
+    public function editUsuarioAction(Request $request, $id = null, SendMailApiKey $sendMailApiKey)
     {
         /* Uso aquí el control de usuario activo porque en security.yml no está funcionando ¿¿?? */
         $this->denyAccessUnlessGranted(new Expression(
@@ -695,8 +702,8 @@ class AdminController extends Controller {
 
                     if ($newApiKey) {
                         // comunicamos al usuario su Apikey
-                        $mail = new Mail($this->getParameter('mail_config'));
-                        if ($mail->apiMail($userNew)) {
+                        /*$mail = new Mail($this->getParameter('mail_config'));*/
+                        if ($sendMailApiKey->__invoke($userNew)) {
                             return $this->redirectToRoute('listaUsuarios');
                         } else {
                             $message = 'Ha habido un problema al comunicar la ApiKey';

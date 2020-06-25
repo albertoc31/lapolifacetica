@@ -13,7 +13,8 @@ use AppBundle\Entity\Programa;
 use AppBundle\Form\UserType;
 use AppBundle\Form\ContactType;
 
-use AppBundle\Service\Mail;
+use AppBundle\Service\SendMailContact;
+use AppBundle\Service\SendMailRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -218,7 +219,7 @@ class DefaultController extends Controller
     /**
      * @Route("/contacto/", name="contacto")
      */
-    public function contactoAction(Request $request, Mail $mail)
+    public function contactoAction(Request $request, SendMailContact $sendMailContact)
     {
         // saco el array de asociaciones
 
@@ -251,9 +252,9 @@ class DefaultController extends Controller
                 if ($form->isValid()) {
 
                     // Send mail
-                    $mail->setAsociaciones($asociaciones);
+                    $sendMailContact->setAsociaciones($asociaciones);
 
-                    if ($mail->contactMail($form->getData())) {
+                    if ($sendMailContact->__invoke($form->getData())) {
                         $message = 'Mensaje enviado correctamente';
                     } else {
                         $message = 'Ha habido un problema al enviar el mail. Por favor, vuelva a intentarlo';
@@ -309,7 +310,7 @@ class DefaultController extends Controller
     /**
      * @Route("/registro/", name="registro")
      */
-    public function registroAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function registroAction(Request $request, UserPasswordEncoderInterface $passwordEncoder, SendMailRegistry $sendMailRegistry)
     {
         // Capturamos repositorio de tabla Asociaciones
         $repository_asc = $this->getDoctrine()->getRepository(Asociacion::class);
@@ -350,6 +351,12 @@ class DefaultController extends Controller
                 // 3c) ROLES
                 $user->setRoles(['ROLE_USER']);
 
+                // 4) Deleted
+                $user->setDeleted(0);
+
+                // 5) ApiKey
+                $user->setApikey('');
+
                 // 4) save the User!
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);
@@ -369,17 +376,17 @@ class DefaultController extends Controller
                 // ... do any other work - like sending them an email, etc
                 // maybe set a "flash" success message for the user
 
-                // Send mail
+                /*// Send mail
                 $mail_config = $this->getParameter('mail_config');
                 // Le pasamos mail_config porque no lo hemos inyectado invocando Mail como servicio
-                $mail = new Mail($mail_config);
+                $mail = new Mail($mail_config);*/
 
                 // NO PUEDO MANDARLO EN EL CONSTRUCTOR NI INYECTAR DEPENDENCIAS :-(
                 $baseurl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-                $mail->setBaseurl($baseurl);
-                $mail->setAsociaciones($asociaciones);
+                $sendMailRegistry->setBaseurl($baseurl);
+                $sendMailRegistry->setAsociaciones($asociaciones);
 
-                if ($mail->registryMail($form->getData())) {
+                if ($sendMailRegistry->__invoke($form->getData())) {
                     return $this->redirectToRoute('acceso');
                 } else {
                     $message = 'Ha habido un problema al comunicar el registro. Por favor, <a href="' . $baseurl . '/contacto">contacte con nosotros</a>';

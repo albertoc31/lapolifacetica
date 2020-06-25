@@ -54,11 +54,26 @@ services:
         arguments:
             - {public_key: '%recaptcha_public_key%'}
 
-    app.mymail:
-        class: AppBundle\Service\Mail
+    app.sendmail.registry:
+        class: AppBundle\Service\SendMailRegistry
         arguments:
             $mail_config: '%mail_config%'
 
-    # Create an alias, so that - by default - if you type-hint Mail, the app.mymail will be used
+    # Create an alias, so that - by default - if you type-hint Mail, the app.sendmailregistry will be used
     # No entiendo por qué no me permite hacerlo directo como los anteriores
-    AppBundle\Service\Mail: '@app.mymail'
+    AppBundle\Service\SendMailRegistry: '@app.sendmail.registry'
+
+    app.sendmail.contact:
+        class: AppBundle\Service\SendMailContact
+        arguments:
+            $mail_config: '%mail_config%'
+
+    AppBundle\Service\SendMailContact: '@app.sendmail.contact'
+
+
+    app.sendmail.apikey:
+        class: AppBundle\Service\SendMailApiKey
+        arguments:
+            $mail_config: '%mail_config%'
+
+    AppBundle\Service\SendMailApiKey: '@app.sendmail.apikey'
