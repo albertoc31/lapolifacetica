@@ -22,7 +22,9 @@
                             {%- else -%}{{ asset('images/radio_generico.jpeg') | imagine_filter('my_photo_500x300') }}{%- endif -%}" alt=""></a>
                     </div>
                     <div class="col-lg-7">
-                        <h4 class="card-title">{{ programa.name | capitalize}}</h4>
+                        <h4 class="card-title">
+                            <a href="{{ path('programa', {'id':programa.id}) }}">{{ programa.name | capitalize}}</a>
+                        </h4>
                         <p class="card-text">{{ programa.description | raw }}</p>
                         <a href="{{ programa.url }}" target="_blank" class="btn btn-primary">Escuchar en nueva pestaña &rarr;</a>
                     </div>
