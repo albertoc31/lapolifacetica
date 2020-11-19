@@ -232,7 +232,6 @@ class Asociacion
     /**
      * Get activities
      *
-     * @return int
      */
     public function getActivities()
     {
