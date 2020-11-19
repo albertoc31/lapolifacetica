@@ -217,6 +217,26 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/programa/{id}", name="programa")
+     */
+    public function programaAction(Request $request, $id = null)
+    {
+        if ($id != null) {
+
+            $repository = $this->getDoctrine()->getRepository(Programa::class);
+            $programa = $repository->findOneById($id);
+
+            return $this->render('home/programa.html.twig', [
+                'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
+                'programa' => $programa,
+            ]);
+        } else {
+            // redirects to the "homepage" route
+            return $this->redirectToRoute('homepage');
+        }
+    }
+
+    /**
      * @Route("/contacto/", name="contacto")
      */
     public function contactoAction(Request $request, SendMailContact $sendMailContact)
