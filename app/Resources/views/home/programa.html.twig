@@ -2,7 +2,7 @@
 {% extends 'base.html.twig' %}
 
 {# TITULO #}
-{% block title %}La Polifacética - Programa endblock %}
+{% block title %}La Polifacética - Programa {{ programa.id}}{% endblock %}
 
 {# BODY #}
 {% block body %}
@@ -10,7 +10,7 @@
 <div class="container">
 
     <!-- Page Heading/Breadcrumbs -->
-    <h1 class="mt-4 mb-3">Programa del día {{ programa.fecha}}</h1>
+    <h1 class="mt-4 mb-3">Programa <small>del día {{ programa.fecha}}</small></h1>
 
     <!-- Portfolio Item Row -->
 
@@ -23,7 +23,7 @@
         <div class="col-md-6">
             <h3 class="my-3">{{ programa.name }}</h3>
             {{ programa.description | raw }}
-            <strong><a href="http://{{ programa.url}}" target="_blank">{{ programa.url}}</a></strong>
+            <strong><a href="{{ programa.url}}" target="_blank">{{ programa.url}}</a></strong>
         </div>
 
     </div>
@@ -36,11 +36,4 @@
 
 {# CSS #}
 {% block stylesheets %}
-    {#<style>
-        body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
-    </style>#}
 {% endblock %}
-
-
-
-

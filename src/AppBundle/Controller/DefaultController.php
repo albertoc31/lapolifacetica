@@ -226,6 +226,10 @@ class DefaultController extends Controller
             $repository = $this->getDoctrine()->getRepository(Programa::class);
             $programa = $repository->findOneById($id);
 
+            setlocale(LC_TIME, "es_ES");
+            $fecha = strftime("%e de %B del %Y", $programa->getFecha()->getTimestamp());
+            $programa->setFecha($fecha);
+
             return $this->render('home/programa.html.twig', [
                 'base_dir' => realpath($this->getParameter('kernel.project_dir')) . DIRECTORY_SEPARATOR,
                 'programa' => $programa,
